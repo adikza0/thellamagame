@@ -1,6 +1,8 @@
 import { Sprite, Assets, Spritesheet, AnimatedSprite } from 'pixi.js';
+import gameConfig from './gameConfig.json' assert { type: "json" };
+import llamaWalkData from '/src/public/spritesheet/llama_walk.json' assert { type: 'json' };
 
-const atlasData = {
+/*const atlasData = {
   frames: {
     go_up1: {
       frame: { x: 0, y: 0, w: 128, h: 128 },
@@ -94,20 +96,23 @@ const atlasData = {
     go_right: ['go_right1', 'go_right2', 'go_right3', 'go_right4']
   }
 }
+*/
+
 
 
 export class Player {
 
-  constructor(app) {
+  constructor(app, walls) {
     this.app = app;
     this.x = 0;
     this.y = 0;
     this.speed = 5;
+    this.walls = walls;
   }
 
   async init() {
-    const texture = await Assets.load(atlasData.meta.image);
-    this.spritesheet = new Spritesheet(texture, atlasData);
+    const texture = await Assets.load('/src/public/spritesheet/llama_walk.png');
+    this.spritesheet = new Spritesheet(texture, llamaWalkData);
     await this.spritesheet.parse();
     this.animatedSprite = new AnimatedSprite(this.spritesheet.animations.go_down)
     this.animatedSprite.play();
@@ -117,8 +122,8 @@ export class Player {
 
 
   render(x, y) {
-    this.animatedSprite.width = 150;
-    this.animatedSprite.height = 150;
+    this.animatedSprite.width = gameConfig.player.width;
+    this.animatedSprite.height = gameConfig.player.height;
 
     this.x = x - this.animatedSprite.width / 2;
     this.y = y - this.animatedSprite.height / 2;
@@ -135,31 +140,70 @@ export class Player {
     return;
   }
 
-  // Remove old sprite from stage
+  // Save current dimensions
+  const { width, height } = this.animatedSprite;
+
+  // Remove old sprite
   this.app.stage.removeChild(this.animatedSprite);
 
-  // Create new animated sprite
+  // Create new sprite with the correct animation
   this.animatedSprite = new AnimatedSprite(this.spritesheet.animations[go_direction]);
+  
   this.animatedSprite.animationSpeed = 0.13;
-  this.animatedSprite.width = 150;
-  this.animatedSprite.height = 150;
+
+  // Reapply previous size
+  this.animatedSprite.width = width;
+  this.animatedSprite.height = height;
+
   this.animatedSprite.play();
 
-  // Keep it at the same position
+  // Restore position
   this.sync_position();
 
-  // Add the new sprite to the stage
   this.app.stage.addChild(this.animatedSprite);
 }
   
   move(x_offset, y_offset) {
+  // Try moving on X axis
+  if (!this.checkCollision(x_offset, 0)) {
     this.x += x_offset;
-    this.y += y_offset;
-    this.sync_position();
   }
+
+  // Try moving on Y axis
+  if (!this.checkCollision(0, y_offset)) {
+    this.y += y_offset;
+  }
+
+  this.sync_position();
+}
 
   sync_position() {
     this.animatedSprite.x = this.x;
     this.animatedSprite.y = this.y;
+  }
+
+  getBounds(x_offset = 0, y_offset = 0) {
+    return {
+      x: this.x + x_offset,
+      y: this.y + y_offset,
+      width: this.animatedSprite.width,
+      height: this.animatedSprite.height
+    };
+  }
+
+  checkCollision(x_offset, y_offset) {
+    const playerBounds = this.getBounds(x_offset, y_offset);
+    for (const wall of this.walls) {
+      const wallBounds = wall.getBounds();
+      if (
+        playerBounds.x < wallBounds.x + wallBounds.width &&
+        playerBounds.x + playerBounds.width > wallBounds.x &&
+        playerBounds.y < wallBounds.y + wallBounds.height &&
+        playerBounds.y + playerBounds.height > wallBounds.y
+      ) {
+        return true; // Collision
+      }
+    }
+    return false;
   }
 }
