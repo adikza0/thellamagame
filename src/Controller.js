@@ -4,6 +4,7 @@ export class Controller {
     this.player = player;
     this.pressed_keys = [];
     this.movement_keys = ["W", "A", "S", "D"];
+    this.last_player_movement = "";
   }
   addEventListeners() {
     this.document.addEventListener('keydown', (event) => {
@@ -49,15 +50,30 @@ export class Controller {
   calculate_animation_direction(){
     const movement = this.calculate_movement();
     if (movement.x === 0 && movement.y ===0){
-      return 'go_down';
+      switch (this.last_player_movement){
+        case "llama_walk_left":
+          return "llama_eat_left"
+        case "llama_walk_right":
+          return "llama_eat_right"
+        case "llama_walk_up":
+          return "llama_eat_up"
+        case "llama_eat_down":
+          return "llama_eat_down";
+      }
+
+      return 'llama_eat_down';
     }else if(movement.x < 0){
-      return 'go_left';
+      this.last_player_movement = 'llama_walk_left';
+      return 'llama_walk_left';
     }else if(movement.x > 0){
-      return 'go_right';
+      this.last_player_movement = 'llama_walk_right';
+      return 'llama_walk_right';
     }else if(movement.y > 0){
-      return 'go_down';
+      this.last_player_movement = 'llama_walk_down';
+      return 'llama_walk_down';
     }else{
-      return 'go_up';
+      this.last_player_movement = 'llama_walk_up';
+      return 'llama_walk_up';
     }
   }
 }
