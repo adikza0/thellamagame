@@ -5,8 +5,8 @@ import llamaWalkData from '/src/public/spritesheet/llama_movement.json' assert {
 
 export class Player {
 
-  constructor(app, walls) {
-    this.app = app;
+  constructor(playerLayer, walls) {
+    this.playerLayer = playerLayer;
     this.x = 0;
     this.y = 0;
     this.speed = 5;
@@ -31,7 +31,7 @@ export class Player {
     this.sync_position();
 
     this.spriteContainer.addChild(this.animatedSprite);
-    this.app.stage.addChild(this.spriteContainer);
+    this.playerLayer.addChild(this.spriteContainer);
   }
 
   change_animation(animation) {
@@ -42,7 +42,7 @@ export class Player {
     }
 
     // Remove old sprite
-    this.app.stage.removeChild(this.spriteContainer);
+    this.playerLayer.removeChild(this.spriteContainer);
 
     this.spriteContainer = new Container();
     this.animatedSprite = new AnimatedSprite(this.spritesheet.animations[animation]);
@@ -58,7 +58,7 @@ export class Player {
     // Restore position
 
 
-    this.app.stage.addChild(this.spriteContainer);
+    this.playerLayer.addChild(this.spriteContainer);
     this.sync_position();
   }
 
@@ -105,4 +105,11 @@ export class Player {
     }
     return false;
   }
+
+  getPosition() {
+  return {
+    x: this.spriteContainer.x + this.spriteContainer.width / 2,
+    y: this.spriteContainer.y + this.spriteContainer.height / 2
+  };
+}
 }

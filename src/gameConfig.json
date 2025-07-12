@@ -7,6 +7,8 @@
   },
   "player": {
     "height" : 90,
-    "width": 60
+    "width": 60,
+    "projectileSpeed": 10,
+    "projectileRange": 250
   }
 }

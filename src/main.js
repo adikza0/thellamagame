@@ -3,6 +3,8 @@ import { Player } from "./Player";
 import { Controller } from "./Controller.js";
 import { Wall } from "./Wall.js";
 import gameConfig from './gameConfig.json' assert { type: "json" };
+import { Projectile } from "./Projectile.js";
+import { Container } from "pixi.js";
 
 
 (async () => {
@@ -18,25 +20,48 @@ import gameConfig from './gameConfig.json' assert { type: "json" };
     wall.render();
   })
 
-  const player = new Player(app, walls);
-  await player.init();  // <-- MUST await init() to load sprite before spawn
-  player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
+  const projectileLayer = new Container();
+  const playerLayer = new Container();
 
+  const player = new Player(playerLayer, walls);
+  await player.init();  // <-- MUST await init() to load sprite before spawn
   document.body.appendChild(app.canvas);
-  const controller = new Controller(document, player);
+  player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
+  let projectiles = [];
+
+  const controller = new Controller(document, player, projectiles, projectileLayer);
   controller.addEventListeners();
 
 
+  const gameContainer = new Container();
+
+
+
+  gameContainer.addChild(projectileLayer); // behind
+  gameContainer.addChild(playerLayer);     // in front
+
+  app.stage.addChild(gameContainer);
+
+  playerLayer.addChild(player.spriteContainer);
   app.ticker.add(() => {
     if (controller.pressed_keys.length >= 1) {
       let offsets = controller.calculate_movement();
-
-      if (offsets.x !== 0 && offsets.y !== 0) {   // reduces movement on both directions to half when going diagonally
+      if (offsets.x !== 0 && offsets.y !== 0) {
         player.move(offsets.x / 2, offsets.y / 2);
       } else {
         player.move(offsets.x, offsets.y);
       }
     }
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      if (projectiles[i].sprite == null) {
+        projectiles.splice(i, 1);
+      }
+    }
+    projectiles.forEach((projectile) => {
+      projectile.move();
+    })
   })
+
+
 })();
 
