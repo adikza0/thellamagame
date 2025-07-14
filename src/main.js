@@ -15,7 +15,7 @@ import { Container } from "pixi.js";
     backgroundColor: gameConfig.game.backgroundColor,
     backgroundAlpha: 0.8
   });
-  const walls = [new Wall(app, 0, 50, 0 + gameConfig.game.UIHeight, app.canvas.height), new Wall(app, 0, app.canvas.width, gameConfig.game.UIHeight, gameConfig.game.UIHeight + 50), new Wall(app, app.canvas.width - 50, app.canvas.width, gameConfig.game.UIHeight, app.canvas.height), new Wall(app, 0, app.canvas.width, app.canvas.height - 50, app.canvas.height)]
+  const walls = [new Wall(app, 0, 50, 0 + gameConfig.game.UIHeight, app.canvas.height), new Wall(app, 0, app.canvas.width, gameConfig.game.UIHeight, gameConfig.game.UIHeight + 50), new Wall(app, app.canvas.width - 50, app.canvas.width, gameConfig.game.UIHeight, app.canvas.height), new Wall(app, 0, app.canvas.width, app.canvas.height - 50, app.canvas.height), new Wall(app, 250, 300, 500,600)]
   walls.forEach((wall) => {
     wall.render();
   })
@@ -50,7 +50,7 @@ import { Container } from "pixi.js";
       }
     }
     projectiles.forEach((projectile) => {
-      projectile.update();
+      projectile.update(walls);
     })
 
     controller.update()

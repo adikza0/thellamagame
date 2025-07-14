@@ -6,8 +6,8 @@
     "UIHeight" : 100
   },
   "player": {
-    "height" : 90,
-    "width": 60,
+    "height" : 65,
+    "width": 50,
     "projectileSpeed": 10,
     "projectileRange": 450
   }

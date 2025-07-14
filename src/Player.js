@@ -2,7 +2,6 @@ import { Sprite, Assets, Spritesheet, AnimatedSprite, Container } from 'pixi.js'
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import llamaWalkData from '/src/public/spritesheet/llama_movement.json' assert { type: 'json' };
 
-
 export class Player {
 
   constructor(playerLayer, walls) {
@@ -20,78 +19,62 @@ export class Player {
     const texture = await Assets.load('/src/public/spritesheet/llama_movement.png');
     this.spritesheet = new Spritesheet(texture, llamaWalkData);
     await this.spritesheet.parse();
-    this.animatedSprite = new AnimatedSprite(this.spritesheet.animations.llama_eat_down)
-    this.animatedSprite.play();
-    this.animatedSprite.animationSpeed = 0.12
-  }
-
-  render(x, y) {
 
     this.spriteContainer = new Container();
-    this.x = x - this.animatedSprite.width / 2;
-    this.y = y - this.animatedSprite.height / 2;
 
-    this.sync_position();
+    this.animatedSprite = new AnimatedSprite(this.spritesheet.animations[this.currentAnimation]);
+    this.animatedSprite.anchor.set(0.5);
+    this.animatedSprite.x = gameConfig.player.width / 2;
+    this.animatedSprite.y = gameConfig.player.height / 2;
+    this.animatedSprite.animationSpeed = 0.12;
+    this.animatedSprite.play();
 
     this.spriteContainer.addChild(this.animatedSprite);
+
     this.playerLayer.addChild(this.spriteContainer);
   }
 
-  change_animation(animation) {
+  render(x, y) {
+    this.x = x;
+    this.y = y;
+    this.sync_position();
+  }
 
+  change_animation(animation) {
     if (!this.spritesheet.animations[animation]) {
       console.warn(`Unknown animation: ${animation}`);
       return;
     }
 
-    // Remove old sprite
-    this.playerLayer.removeChild(this.spriteContainer);
-
-    this.spriteContainer = new Container();
-    this.animatedSprite = new AnimatedSprite(this.spritesheet.animations[animation]);
-    this.spriteContainer.addChild(this.animatedSprite);
-
-    //total bshit to shift animation little bit down because it would teleport
-    if (animation === "llama_eat_left" || animation === "llama_eat_right") {
-      this.animatedSprite.y += 25;
-    }
-
+    this.currentAnimation = animation;
+    this.animatedSprite.textures = this.spritesheet.animations[animation];
+    this.animatedSprite.gotoAndPlay(0);
     this.animatedSprite.animationSpeed = 0.13;
-    this.animatedSprite.play();
-    // Restore position
-
-
-    this.playerLayer.addChild(this.spriteContainer);
-    this.sync_position();
   }
 
   move(x_offset, y_offset) {
-  let movedX = 0;
-  let movedY = 0;
+    let movedX = 0;
+    let movedY = 0;
 
-  // Try moving on X axis
-  if (!this.checkCollision(x_offset, 0)) {
-    this.x += x_offset;
-    movedX = x_offset;
+    if (!this.checkCollision(x_offset, 0)) {
+      this.x += x_offset;
+      movedX = x_offset;
+    }
+
+    if (!this.checkCollision(0, y_offset)) {
+      this.y += y_offset;
+      movedY = y_offset;
+    }
+
+    this.velocity_x = movedX;
+    this.velocity_y = movedY;
+
+    this.sync_position();
   }
 
-  // Try moving on Y axis
-  if (!this.checkCollision(0, y_offset * 2)) {
-    this.y += y_offset;
-    movedY = y_offset;
+  getVelocity() {
+    return { velocity_x: this.velocity_x, velocity_y: this.velocity_y };
   }
-
-  this.velocity_x = movedX;
-  this.velocity_y = movedY;
-
-  this.sync_position();
-}
-
-getVelocity() {
-  return { velocity_x: this.velocity_x, velocity_y: this.velocity_y };
-}
-
-
 
   sync_position() {
     this.spriteContainer.x = this.x;
@@ -100,10 +83,10 @@ getVelocity() {
 
   getBounds(x_offset = 0, y_offset = 0) {
     return {
-      x: this.x + x_offset,
-      y: this.y + y_offset,
-      width: this.animatedSprite.width,
-      height: this.animatedSprite.height
+      x: Math.round(this.x + x_offset),
+      y: Math.round(this.y + y_offset),
+      width: gameConfig.player.width,
+      height: gameConfig.player.height
     };
   }
 
@@ -117,16 +100,16 @@ getVelocity() {
         playerBounds.y < wallBounds.y + wallBounds.height &&
         playerBounds.y + playerBounds.height > wallBounds.y
       ) {
-        return true; // Collision
+        return true; // Collision detected
       }
     }
     return false;
   }
 
   getPosition() {
-  return {
-    x: this.spriteContainer.x + this.spriteContainer.width / 2,
-    y: this.spriteContainer.y + this.spriteContainer.height / 2
-  };
-}
+    return {
+      x: this.spriteContainer.x + this.spriteContainer.width / 2,
+      y: this.spriteContainer.y + this.spriteContainer.height / 2
+    };
+  }
 }

@@ -10,15 +10,16 @@ export class Projectile {
     this.speed = gameConfig.player.projectileSpeed;
     const { x, y } = player.getPosition();
     this.direction = direction;
-    this.distance_travelled = 0;    
+    this.distance_travelled = 0;
     this.x = x;
     this.y = y;
     this.calculate_movement_per_ticks();
+    this.radius = 10;
   }
 
   render() {
     this.sprite = new Graphics()
-      .circle(0, 0, 10)
+      .circle(0, 0, this.radius)
       .fill('0xb3372e');  // Just the color number, no braces
 
     this.sprite.x = this.x;
@@ -60,42 +61,52 @@ export class Projectile {
     this.velocity_x += velocity_x;
     this.velocity_y += velocity_y;
   }
-
- /* move() {
-    if (!this.sprite) return;
-    this.distance_travelled += Math.sqrt(this.velocity_x ** 2 + this.velocity_y ** 2);
-    if (this.distance_travelled > this.range) {
-      this.destroy();
-      return;
-    }
+  _movePosition() {
     this.x += this.velocity_x;
     this.y += this.velocity_y;
-    this.sprite.x = this.x;
-    this.sprite.y = this.y;
-
-  }*/
- _movePosition() {
-  this.x += this.velocity_x;
-  this.y += this.velocity_y;
-  if (this.sprite) {
-    this.sprite.x = this.x;
-    this.sprite.y = this.y;
+    if (this.sprite) {
+      this.sprite.x = this.x;
+      this.sprite.y = this.y;
+    }
   }
-}
-update() {
-  if (!this.sprite) return;  // guard
-  
-  // update travelled distance
+  update(walls) {
+  if (!this.sprite) return;
+
   this.distance_travelled += Math.sqrt(this.velocity_x ** 2 + this.velocity_y ** 2);
-  
-  // destroy if out of range
   if (this.distance_travelled > this.range) {
     this.destroy();
     return;
   }
-  
-  // update position
+
   this._movePosition();
+
+  if (this._checkCollision(walls)) {
+    this.destroy();
+  }
+}
+
+
+  _checkCollision(walls) {
+  const projectile_bounds = {
+    x: this.x - this.radius,
+    y: this.y - this.radius,
+    width: this.radius * 2,
+    height: this.radius * 2
+  };
+
+  for (const wall of walls) {
+    const wall_bounds = wall.getBounds();
+    if (
+      projectile_bounds.x < wall_bounds.x + wall_bounds.width &&
+      projectile_bounds.x + projectile_bounds.width > wall_bounds.x &&
+      projectile_bounds.y < wall_bounds.y + wall_bounds.height &&
+      projectile_bounds.y + projectile_bounds.height > wall_bounds.y
+    ) {
+      return true; // ✅ Exit early on first collision
+    }
+  }
+
+  return false; // ✅ Only return false if no collision found
 }
 
 }
