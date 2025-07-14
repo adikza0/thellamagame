@@ -20,16 +20,16 @@ import { Container } from "pixi.js";
     wall.render();
   })
 
-  const projectileLayer = new Container();
-  const playerLayer = new Container();
+  const projectile_layer = new Container();
+  const player_layer = new Container();
 
-  const player = new Player(playerLayer, walls);
+  const player = new Player(player_layer, walls);
   await player.init();  // <-- MUST await init() to load sprite before spawn
   document.body.appendChild(app.canvas);
   player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
   let projectiles = [];
 
-  const controller = new Controller(document, player, projectiles, projectileLayer);
+  const controller = new Controller(document, player, projectiles, projectile_layer);
   controller.addEventListeners();
 
 
@@ -37,12 +37,12 @@ import { Container } from "pixi.js";
 
 
 
-  gameContainer.addChild(projectileLayer); // behind
-  gameContainer.addChild(playerLayer);     // in front
+  gameContainer.addChild(projectile_layer); // behind
+  gameContainer.addChild(player_layer);     // in front
 
   app.stage.addChild(gameContainer);
 
-  playerLayer.addChild(player.spriteContainer);
+  player_layer.addChild(player.spriteContainer);
   app.ticker.add(() => {
     for (let i = projectiles.length - 1; i >= 0; i--) {
       if (projectiles[i].sprite == null) {
