@@ -44,22 +44,16 @@ import { Container } from "pixi.js";
 
   playerLayer.addChild(player.spriteContainer);
   app.ticker.add(() => {
-    if (controller.pressed_keys.length >= 1) {
-      let offsets = controller.calculate_movement();
-      if (offsets.x !== 0 && offsets.y !== 0) {
-        player.move(offsets.x / 2, offsets.y / 2);
-      } else {
-        player.move(offsets.x, offsets.y);
-      }
-    }
     for (let i = projectiles.length - 1; i >= 0; i--) {
       if (projectiles[i].sprite == null) {
         projectiles.splice(i, 1);
       }
     }
     projectiles.forEach((projectile) => {
-      projectile.move();
+      projectile.update();
     })
+
+    controller.update()
   })
 
 

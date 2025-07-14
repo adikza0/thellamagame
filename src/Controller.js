@@ -103,4 +103,20 @@ export class Controller {
       return 'llama_walk_up';
     }
   }
+
+  update() {
+    const movement = this.calculate_movement();
+
+    this.player.move(movement.x, movement.y);
+
+    // Calculate new animation direction string
+    const newAnimation = this.calculate_animation_direction();
+
+    // Call change_animation only if different from last one
+    if (this.player.currentAnimation !== newAnimation) {
+      this.player.change_animation(newAnimation);
+      this.player.currentAnimation = newAnimation; // keep track on player object
+    }
+  }
+
 }

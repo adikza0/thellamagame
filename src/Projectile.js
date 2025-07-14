@@ -1,33 +1,19 @@
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Graphics } from 'pixi.js';
 
+
 export class Projectile {
-  constructor(projectileLayer, player, direction) {
+  constructor(projectile_layer, player, direction) {
     this.player = player
-    this.projectileLayer = projectileLayer;
+    this.projectile_layer = projectile_layer;
     this.range = gameConfig.player.projectileRange;
     this.speed = gameConfig.player.projectileSpeed;
     const { x, y } = player.getPosition();
     this.direction = direction;
-
+    this.distance_travelled = 0;    
     this.x = x;
     this.y = y;
-    this.destination_x = this.x;
-    this.destination_y = this.y;
-    switch (direction) {
-      case "right":
-        this.destination_x += this.range;
-        break;
-      case "left":
-        this.destination_x -= this.range;
-        break;
-      case "up":
-        this.destination_y -= this.range;
-        break;
-      case "down":
-        this.destination_y += this.range;
-        break;
-    }
+    this.calculate_movement_per_ticks();
   }
 
   render() {
@@ -37,47 +23,79 @@ export class Projectile {
 
     this.sprite.x = this.x;
     this.sprite.y = this.y;
-    this.projectileLayer.addChild(this.sprite);
+    this.projectile_layer.addChild(this.sprite);
 
   }
   destroy() {
     if (this.sprite) {
-      this.projectileLayer.removeChild(this.sprite);
+      this.projectile_layer.removeChild(this.sprite);
       this.sprite.destroy();
       this.sprite = null;
     }
   }
-  move() {
-    switch(this.direction){
+  calculate_movement_per_ticks() {
+    const { velocity_x, velocity_y } = this.player.getVelocity();
+    switch (this.direction) {
       case "up":
-        this.y -= this.speed;
-        this.sprite.y = this.y;
-        if(this.y < this.destination_y){
-          this.destroy();
-        }
+        this.velocity_x = 0;
+        this.velocity_y = -this.speed;
         break;
       case "down":
-        this.y += this.speed;
-        this.sprite.y = this.y;
-        if(this.y > this.destination_y){
-          this.destroy();
-        }
+        this.velocity_x = 0;
+        this.velocity_y = this.speed;
         break;
       case "left":
-        this.x -= this.speed;
-        this.sprite.x = this.x;
-        if(this.x < this.destination_x){
-          this.destroy();
-        }
+        this.velocity_x = -this.speed;
+        this.velocity_y = 0;
         break;
       case "right":
-        this.x += this.speed;
-        this.sprite.x = this.x;
-        if(this.x > this.destination_x){
-          this.destroy();
-        }
+        this.velocity_x = this.speed;
+        this.velocity_y = 0;
+        break;
+      default:
+        this.velocity_x = 0;
+        this.velocity_y = 0;
         break;
     }
+    this.velocity_x += velocity_x;
+    this.velocity_y += velocity_y;
   }
+
+ /* move() {
+    if (!this.sprite) return;
+    this.distance_travelled += Math.sqrt(this.velocity_x ** 2 + this.velocity_y ** 2);
+    if (this.distance_travelled > this.range) {
+      this.destroy();
+      return;
+    }
+    this.x += this.velocity_x;
+    this.y += this.velocity_y;
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
+
+  }*/
+ _movePosition() {
+  this.x += this.velocity_x;
+  this.y += this.velocity_y;
+  if (this.sprite) {
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
+  }
+}
+update() {
+  if (!this.sprite) return;  // guard
+  
+  // update travelled distance
+  this.distance_travelled += Math.sqrt(this.velocity_x ** 2 + this.velocity_y ** 2);
+  
+  // destroy if out of range
+  if (this.distance_travelled > this.range) {
+    this.destroy();
+    return;
+  }
+  
+  // update position
+  this._movePosition();
+}
 
 }
