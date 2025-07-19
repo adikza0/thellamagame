@@ -1,6 +1,7 @@
 import { AnimatedSprite, Container, Spritesheet, Assets, Sprite } from "pixi.js";
 import batAnimationData from '/src/public/spritesheet/bat.json' assert { type: 'json' };
 import gameConfig from '/src/gameConfig.json' assert { type: 'json' };
+import explosionData from '/src/public/spritesheet/explosion.json' assert { type: 'json' };
 
 class Npc {
   constructor(player, layer, health, x, y) {
@@ -62,7 +63,7 @@ class Npc {
       this.animatedSprite = null;
       this.spriteContainer.destroy();
       this.spriteContainer = null;
-      if(this.dynamiteSprite){
+      if (this.dynamiteSprite) {
         this.dynamiteSprite.destroy();
         this.dynamiteSprite = null;
       }
@@ -93,7 +94,7 @@ export class Bat extends Npc {
 
   async init() {
     await super.init('/src/public/spritesheet/bat.png', batAnimationData, 'fly');
-    
+
     const texture = await Assets.load('/src/public/img/dynamite.png');
     this.dynamiteSprite = new Sprite(texture);
     this.dynamiteSprite.anchor.set(0.5);
@@ -114,12 +115,41 @@ export class Bat extends Npc {
     this.x += velocity.x;
     this.y += velocity.y;
     if (this.calculateDistanceFromPlayer() < gameConfig.bat.attackRange) {
-      
-      this.destroy();
-      //todo: add code to damage player
-      //todo: add explosion animation
+      this.explode();
+
     }
   }
+
+  async explode() {
+    const explosionX = this.spriteContainer.x;
+    const explosionY = this.spriteContainer.y;
+    this.player.takeDamage();
+    // Destroy the bat before explosion plays
+    this.destroy();
+    
+    const explosionTexture = await Assets.load('/src/public/spritesheet/explosion.png');
+    const explosionSheet = new Spritesheet(explosionTexture, explosionData);
+    await explosionSheet.parse();
+
+    const explosionSprite = new AnimatedSprite(explosionSheet.animations['explosion']);
+    explosionSprite.anchor.set(0.5);
+    explosionSprite.width = 60;
+    explosionSprite.height = 60;
+    explosionSprite.x = explosionX + 15;
+    explosionSprite.y = explosionY + 15;
+    explosionSprite.animationSpeed = 0.2;
+    explosionSprite.loop = false;
+
+    this.layer.addChild(explosionSprite);
+    explosionSprite.play();
+
+    explosionSprite.onComplete = () => {
+      explosionSprite.destroy();
+    };
+
+    // TODO: damage the player if within range
+  }
+
 
   calculateDistanceFromPlayer() {
     const position = this.player.getPosition();

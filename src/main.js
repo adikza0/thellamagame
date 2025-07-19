@@ -54,7 +54,9 @@ import { Bat } from "./Npc.js";
   // Spawn NPCs
   const bat1 = new Bat(player, playerLayer, 0, 300);
   await bat1.init();
-  npcs.push(bat1);
+  const bat2 = new Bat(player, playerLayer, 500, 300);
+  await bat2.init();
+  npcs.push(bat1,bat2);
 
   // Add player sprite to layer
   playerLayer.addChild(player.spriteContainer);

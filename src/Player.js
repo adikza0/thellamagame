@@ -12,6 +12,7 @@ export class Player {
     this.walls = walls;
     this.velocityX = 0;
     this.velocityY = 0;
+    this.health = gameConfig.player.health;
   }
 
   async init() {
@@ -119,5 +120,12 @@ export class Player {
       x: this.spriteContainer.x + this.spriteContainer.width / 2,
       y: this.spriteContainer.y + this.spriteContainer.height / 2
     };
+  }
+
+  takeDamage(){
+    this.health -= 1;
+    if (this.health <= 0) {
+      console.log("You DIED")
+    }
   }
 }
