@@ -1,4 +1,4 @@
-import { AnimatedSprite, Container, Spritesheet, Assets } from "pixi.js";
+import { AnimatedSprite, Container, Spritesheet, Assets, Sprite } from "pixi.js";
 import batAnimationData from '/src/public/spritesheet/bat.json' assert { type: 'json' };
 import gameConfig from '/src/gameConfig.json' assert { type: 'json' };
 
@@ -56,12 +56,20 @@ class Npc {
   }
 
   destroy() {
-    this.layer.removeChild(this.spriteContainer);
-    this.animatedSprite.destroy();
-    this.animatedSprite = null;
-    this.spriteContainer.destroy();
-    this.spriteContainer = null;
+    if (this.spriteContainer) {
+      this.layer.removeChild(this.spriteContainer);
+      this.animatedSprite.destroy();
+      this.animatedSprite = null;
+      this.spriteContainer.destroy();
+      this.spriteContainer = null;
+      if(this.dynamiteSprite){
+        this.dynamiteSprite.destroy();
+        this.dynamiteSprite = null;
+      }
+      this.isDestroyed = true; // mark it destroyed
+    }
   }
+
 
   update() {
     this.spriteContainer.x = this.x;
@@ -69,9 +77,11 @@ class Npc {
   }
 
   syncPosition() {
+    if (this.isDestroyed || !this.spriteContainer) return;
     this.spriteContainer.x = this.x;
     this.spriteContainer.y = this.y;
   }
+
 }
 
 export class Bat extends Npc {
@@ -83,6 +93,15 @@ export class Bat extends Npc {
 
   async init() {
     await super.init('/src/public/spritesheet/bat.png', batAnimationData, 'fly');
+    
+    const texture = await Assets.load('/src/public/img/dynamite.png');
+    this.dynamiteSprite = new Sprite(texture);
+    this.dynamiteSprite.anchor.set(0.5);
+    this.dynamiteSprite.x = 5;
+    this.dynamiteSprite.width = 20;
+    this.dynamiteSprite.height = 15;
+    this.spriteContainer.addChild(this.dynamiteSprite);
+    this.switchAnimationSide();
   }
 
   action(playerPosition) {
@@ -94,6 +113,20 @@ export class Bat extends Npc {
     const velocity = this.calculateVelocity(playerPosition);
     this.x += velocity.x;
     this.y += velocity.y;
+    if (this.calculateDistanceFromPlayer() < gameConfig.bat.attackRange) {
+      
+      this.destroy();
+      //todo: add code to damage player
+      //todo: add explosion animation
+    }
+  }
+
+  calculateDistanceFromPlayer() {
+    const position = this.player.getPosition();
+    return Math.sqrt(
+      (this.spriteContainer.x - position.x) ** 2 +
+      (this.spriteContainer.y - position.y) ** 2
+    );
   }
 
   calculateVelocity(playerPosition) {
@@ -117,9 +150,15 @@ export class Bat extends Npc {
     if (this.currentAnimation === 'left') {
       this.currentAnimation = 'right';
       this.animatedSprite.scale.x = 1;
+      this.dynamiteSprite.x = 0;
+      this.dynamiteSprite.y = 10
+      this.dynamiteSprite.rotation = 4.5;
     } else if (this.currentAnimation === 'right') {
       this.currentAnimation = 'left';
       this.animatedSprite.scale.x = -1;
+      this.dynamiteSprite.x = 0;
+      this.dynamiteSprite.y = 10
+      this.dynamiteSprite.rotation = 4.5;
     }
   }
 }

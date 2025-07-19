@@ -52,42 +52,38 @@ import { Bat } from "./Npc.js";
   app.stage.addChild(gameContainer);
 
   // Spawn NPCs
-  const bat1 = new Bat(player, playerLayer, 500, 300);
-  const bat2 = new Bat(player, playerLayer, 400, 300);
+  const bat1 = new Bat(player, playerLayer, 0, 300);
   await bat1.init();
-  await bat2.init();
-  npcs.push(bat1, bat2);
+  npcs.push(bat1);
 
   // Add player sprite to layer
   playerLayer.addChild(player.spriteContainer);
 
   // Game loop
   app.ticker.add(() => {
-    // Clean up inactive projectiles
+    // Cleanup dead projectiles
     for (let i = projectiles.length - 1; i >= 0; i--) {
       if (!projectiles[i].sprite) {
         projectiles.splice(i, 1);
       }
     }
 
-    // Clean up destroyed NPCs
+    // Update NPCs, but skip destroyed ones
     for (let i = npcs.length - 1; i >= 0; i--) {
-      if (!npcs[i].spriteContainer) {
+      if (npcs[i].isDestroyed) {
         npcs.splice(i, 1);
+      } else {
+        npcs[i].action(player.getPosition());
       }
     }
-
-    // Update NPC behavior
-    npcs.forEach(npc => {
-      npc.action(player.getPosition());
-    });
 
     // Update projectiles
     projectiles.forEach(projectile => {
       projectile.update(walls, npcs);
     });
 
-    // Update player movement
+    // Update player
     controller.update();
   });
+
 })();
