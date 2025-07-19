@@ -1,7 +1,7 @@
 {
   "game": {
     "width" : 900,
-    "height" : 900,
+    "height" : 750,
     "backgroundColor" :  "0x177cba",
     "UIHeight" : 100
   },
@@ -9,12 +9,11 @@
     "height" : 65,
     "width": 50,
     "projectileSpeed": 10,
-    "projectileRange": 450
+    "projectileRange": 450,
+    "speed": 4
   },
   "bat": {
-    "health": 5,
-    "speed": 12,
-    "damage": 1,
-    "attackRange": 50
+    "health": 1,
+    "speed": 3
   }
 }

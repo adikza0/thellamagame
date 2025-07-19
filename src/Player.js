@@ -9,7 +9,7 @@ export class Player {
     this.playerLayer = playerLayer;
     this.x = 0;
     this.y = 0;
-    this.speed = 4;
+    this.speed = gameConfig.player.speed;
     this.walls = walls;
     this.velocity_x = 0;
     this.velocity_y = 0;
@@ -53,24 +53,34 @@ export class Player {
   }
 
   move(x_offset, y_offset) {
-    let movedX = 0;
-    let movedY = 0;
+  let movedX = x_offset;
+  let movedY = y_offset;
 
-    if (!this.checkCollision(x_offset, 0)) {
-      this.x += x_offset;
-      movedX = x_offset;
-    }
-
-    if (!this.checkCollision(0, y_offset)) {
-      this.y += y_offset;
-      movedY = y_offset;
-    }
-
-    this.velocity_x = movedX;
-    this.velocity_y = movedY;
-
-    this.sync_position();
+  // Normalize diagonal movement
+  if (x_offset !== 0 && y_offset !== 0) {
+    movedX /= Math.SQRT2;
+    movedY /= Math.SQRT2;
   }
+
+  let actualMovedX = 0;
+  let actualMovedY = 0;
+
+  if (!this.checkCollision(movedX, 0)) {
+    this.x += movedX;
+    actualMovedX = movedX;
+  }
+
+  if (!this.checkCollision(0, movedY)) {
+    this.y += movedY;
+    actualMovedY = movedY;
+  }
+
+  this.velocity_x = actualMovedX;
+  this.velocity_y = actualMovedY;
+
+  this.sync_position();
+}
+
 
   getVelocity() {
     return { velocity_x: this.velocity_x, velocity_y: this.velocity_y };

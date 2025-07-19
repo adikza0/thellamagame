@@ -44,10 +44,10 @@ import { Bat } from "./Npc.js";
 
   app.stage.addChild(gameContainer);
 
-  npcs.push(new Bat(player_layer, 500, 500));
+  npcs.push(new Bat(player_layer, 500, 300));
   await npcs[0].init();
 
-  npcs.push(new Bat(player_layer, 400, 500));
+  npcs.push(new Bat(player_layer, 400, 300));
   await npcs[1].init();
   
 
@@ -63,7 +63,9 @@ import { Bat } from "./Npc.js";
         npcs.splice(i, 1);
       }
     }
-
+    npcs.forEach((npc) => {
+      npc.action(player.getPosition());
+    })
     projectiles.forEach((projectile) => {
       projectile.update(walls, npcs);
     })
