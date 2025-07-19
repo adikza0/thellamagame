@@ -122,4 +122,4 @@ export class Bat extends Npc {
 }
 
 
-//todo: add animation changes for bats, explode on contact with player + deal dmg to player, spawner?s
+//todo: explode on contact with player + deal dmg to player, spawner
