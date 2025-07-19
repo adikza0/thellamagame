@@ -1,79 +1,87 @@
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Graphics } from 'pixi.js';
 
-
 export class Projectile {
-  constructor(projectile_layer, player, direction) {
-    this.player = player
-    this.projectile_layer = projectile_layer;
+  constructor(projectileLayer, player, direction) {
+    this.player = player;
+    this.projectileLayer = projectileLayer;
     this.range = gameConfig.player.projectileRange;
     this.speed = gameConfig.player.projectileSpeed;
+
     const { x, y } = player.getPosition();
-    this.direction = direction;
-    this.distance_travelled = 0;
     this.x = x;
     this.y = y;
-    this.calculate_movement_per_ticks();
+
+    this.direction = direction;
+    this.distanceTravelled = 0;
     this.radius = 10;
+
+    this.calculateMovementPerTick();
   }
 
   render() {
     this.sprite = new Graphics()
       .circle(0, 0, this.radius)
-      .fill('0xb3372e');  // Just the color number, no braces
+      .fill('0xb3372e');
 
     this.sprite.x = this.x;
     this.sprite.y = this.y;
-    this.projectile_layer.addChild(this.sprite);
-
+    this.projectileLayer.addChild(this.sprite);
   }
+
   destroy() {
     if (this.sprite) {
-      this.projectile_layer.removeChild(this.sprite);
+      this.projectileLayer.removeChild(this.sprite);
       this.sprite.destroy();
       this.sprite = null;
     }
   }
-  calculate_movement_per_ticks() {
-    const { velocity_x, velocity_y } = this.player.getVelocity();
+
+  calculateMovementPerTick() {
+    const { velocityX, velocityY } = this.player.getVelocity();
+
     switch (this.direction) {
       case "up":
-        this.velocity_x = 0;
-        this.velocity_y = -this.speed;
+        this.velocityX = 0;
+        this.velocityY = -this.speed;
         break;
       case "down":
-        this.velocity_x = 0;
-        this.velocity_y = this.speed;
+        this.velocityX = 0;
+        this.velocityY = this.speed;
         break;
       case "left":
-        this.velocity_x = -this.speed;
-        this.velocity_y = 0;
+        this.velocityX = -this.speed;
+        this.velocityY = 0;
         break;
       case "right":
-        this.velocity_x = this.speed;
-        this.velocity_y = 0;
+        this.velocityX = this.speed;
+        this.velocityY = 0;
         break;
       default:
-        this.velocity_x = 0;
-        this.velocity_y = 0;
+        this.velocityX = 0;
+        this.velocityY = 0;
         break;
     }
-    this.velocity_x += velocity_x;
-    this.velocity_y += velocity_y;
+
+    this.velocityX += velocityX;
+    this.velocityY += velocityY;
   }
+
   _movePosition() {
-    this.x += this.velocity_x;
-    this.y += this.velocity_y;
+    this.x += this.velocityX;
+    this.y += this.velocityY;
+
     if (this.sprite) {
       this.sprite.x = this.x;
       this.sprite.y = this.y;
     }
   }
+
   update(walls, npcs) {
     if (!this.sprite) return;
 
-    this.distance_travelled += Math.sqrt(this.velocity_x ** 2 + this.velocity_y ** 2);
-    if (this.distance_travelled > this.range) {
+    this.distanceTravelled += Math.sqrt(this.velocityX ** 2 + this.velocityY ** 2);
+    if (this.distanceTravelled > this.range) {
       this.destroy();
       return;
     }
@@ -85,9 +93,8 @@ export class Projectile {
     }
   }
 
-
   _checkCollision(walls, npcs) {
-    const projectile_bounds = {
+    const projectileBounds = {
       x: this.x - this.radius,
       y: this.y - this.radius,
       width: this.radius * 2,
@@ -95,31 +102,30 @@ export class Projectile {
     };
 
     for (const wall of walls) {
-      const wall_bounds = wall.getBounds();
+      const wallBounds = wall.getBounds();
       if (
-        projectile_bounds.x < wall_bounds.x + wall_bounds.width &&
-        projectile_bounds.x + projectile_bounds.width > wall_bounds.x &&
-        projectile_bounds.y < wall_bounds.y + wall_bounds.height &&
-        projectile_bounds.y + projectile_bounds.height > wall_bounds.y
+        projectileBounds.x < wallBounds.x + wallBounds.width &&
+        projectileBounds.x + projectileBounds.width > wallBounds.x &&
+        projectileBounds.y < wallBounds.y + wallBounds.height &&
+        projectileBounds.y + projectileBounds.height > wallBounds.y
       ) {
-        return true; // ✅ Exit early on first collision
+        return true;
       }
     }
 
-    for(const npc of npcs){
-      const npc_bounds = npc.getBounds();
+    for (const npc of npcs) {
+      const npcBounds = npc.getBounds();
       if (
-        projectile_bounds.x < npc_bounds.x + npc_bounds.width &&
-        projectile_bounds.x + projectile_bounds.width > npc_bounds.x &&
-        projectile_bounds.y < npc_bounds.y + npc_bounds.height &&
-        projectile_bounds.y + projectile_bounds.height > npc_bounds.y
+        projectileBounds.x < npcBounds.x + npcBounds.width &&
+        projectileBounds.x + projectileBounds.width > npcBounds.x &&
+        projectileBounds.y < npcBounds.y + npcBounds.height &&
+        projectileBounds.y + projectileBounds.height > npcBounds.y
       ) {
         npc.takeDamage(1);
-        return true; // ✅ Exit early on first collision
+        return true;
       }
     }
 
-    return false; // ✅ Only return false if no collision found
+    return false;
   }
-
 }

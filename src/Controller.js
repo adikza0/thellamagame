@@ -6,20 +6,20 @@ export class Controller {
     this.projectiles = projectiles;
     this.document = document;
     this.player = player;
-    this.pressed_keys = [];
-    this.movement_keys = ["W", "A", "S", "D"];
-    this.shoot_keys = ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight"]
-    this.last_player_movement = "";
+    this.pressedKeys = [];
+    this.movementKeys = ["W", "A", "S", "D"];
+    this.shootKeys = ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight"];
+    this.lastPlayerMovement = "";
   }
+
   addEventListeners() {
     this.document.addEventListener('keydown', (event) => {
       const key = event.key.toUpperCase();
-      if (this.movement_keys.includes(key) && !this.pressed_keys.includes(key)) {
-        this.pressed_keys.push(key);
-        this.player.change_animation(this.calculate_animation_direction());
-      }
-      else if (this.shoot_keys.includes(event.key)) {
-        let projectile; // declare once
+      if (this.movementKeys.includes(key) && !this.pressedKeys.includes(key)) {
+        this.pressedKeys.push(key);
+        this.player.changeAnimation(this.calculateAnimationDirection());
+      } else if (this.shootKeys.includes(event.key)) {
+        let projectile;
         switch (event.key) {
           case "ArrowUp":
             projectile = new Projectile(this.projectileLayer, this.player, "up");
@@ -39,24 +39,23 @@ export class Controller {
           projectile.render();
         }
       }
-
     });
+
     this.document.addEventListener('keyup', (event) => {
       const key = event.key.toUpperCase();
-      if (this.movement_keys.includes(key)) {
-        this.pressed_keys = this.pressed_keys.filter(item => item !== key);
-        this.player.change_animation(this.calculate_animation_direction());
+      if (this.movementKeys.includes(key)) {
+        this.pressedKeys = this.pressedKeys.filter(item => item !== key);
+        this.player.changeAnimation(this.calculateAnimationDirection());
       }
     });
-
   }
 
-  calculate_movement() {
+  calculateMovement() {
     let x = 0;
     let y = 0;
     const speed = this.player.speed;
 
-    this.pressed_keys.forEach(key => {
+    this.pressedKeys.forEach(key => {
       switch (key) {
         case "A":
           x -= speed;
@@ -70,53 +69,48 @@ export class Controller {
         case "D":
           x += speed;
       }
-    })
+    });
+
     return { x, y };
   }
 
-  calculate_animation_direction() {
-    const movement = this.calculate_movement();
+  calculateAnimationDirection() {
+    const movement = this.calculateMovement();
     if (movement.x === 0 && movement.y === 0) {
-      switch (this.last_player_movement) {
+      switch (this.lastPlayerMovement) {
         case "llama_walk_left":
-          return "llama_eat_left"
+          return "llama_eat_left";
         case "llama_walk_right":
-          return "llama_eat_right"
+          return "llama_eat_right";
         case "llama_walk_up":
-          return "llama_eat_up"
-        case "llama_eat_down":
+          return "llama_eat_up";
+        case "llama_walk_down":
           return "llama_eat_down";
       }
-
-      return 'llama_eat_down';
+      return "llama_eat_down";
     } else if (movement.x < 0) {
-      this.last_player_movement = 'llama_walk_left';
-      return 'llama_walk_left';
+      this.lastPlayerMovement = "llama_walk_left";
+      return "llama_walk_left";
     } else if (movement.x > 0) {
-      this.last_player_movement = 'llama_walk_right';
-      return 'llama_walk_right';
+      this.lastPlayerMovement = "llama_walk_right";
+      return "llama_walk_right";
     } else if (movement.y > 0) {
-      this.last_player_movement = 'llama_walk_down';
-      return 'llama_walk_down';
+      this.lastPlayerMovement = "llama_walk_down";
+      return "llama_walk_down";
     } else {
-      this.last_player_movement = 'llama_walk_up';
-      return 'llama_walk_up';
+      this.lastPlayerMovement = "llama_walk_up";
+      return "llama_walk_up";
     }
   }
 
   update() {
-    const movement = this.calculate_movement();
-
+    const movement = this.calculateMovement();
     this.player.move(movement.x, movement.y);
 
-    // Calculate new animation direction string
-    const newAnimation = this.calculate_animation_direction();
-
-    // Call change_animation only if different from last one
+    const newAnimation = this.calculateAnimationDirection();
     if (this.player.currentAnimation !== newAnimation) {
-      this.player.change_animation(newAnimation);
-      this.player.currentAnimation = newAnimation; // keep track on player object
+      this.player.changeAnimation(newAnimation);
+      this.player.currentAnimation = newAnimation;
     }
   }
-
 }

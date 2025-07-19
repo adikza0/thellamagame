@@ -1,23 +1,28 @@
 import { Graphics } from "pixi.js";
+
 export class Wall {
-  constructor(app, min_x, max_x, min_y, max_y) {
-    this.min_x = min_x;
-    this.max_x = max_x;
-    this.min_y = min_y;
-    this.max_y = max_y;
+  constructor(app, minX, maxX, minY, maxY) {
+    this.minX = minX;
+    this.maxX = maxX;
+    this.minY = minY;
+    this.maxY = maxY;
     this.app = app;
   }
+
   render() {
-    this.wall = new Graphics().rect(this.min_x, this.min_y, this.max_x - this.min_x, this.max_y - this.min_y);
-    this.wall.fill(({ color: 0xb3372e }));
+    this.wall = new Graphics()
+      .rect(this.minX, this.minY, this.maxX - this.minX, this.maxY - this.minY)
+      .fill({ color: 0xb3372e });
+
     this.app.stage.addChild(this.wall);
   }
+
   getBounds() {
     return {
-      x: this.min_x,
-      y: this.min_y,
-      width: this.max_x - this.min_x,
-      height: this.max_y - this.min_y
+      x: this.minX,
+      y: this.minY,
+      width: this.maxX - this.minX,
+      height: this.maxY - this.minY
     };
   }
 }

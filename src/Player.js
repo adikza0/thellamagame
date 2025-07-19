@@ -3,7 +3,6 @@ import gameConfig from './gameConfig.json' assert { type: "json" };
 import llamaWalkData from '/src/public/spritesheet/llama_movement.json' assert { type: 'json' };
 
 export class Player {
-
   constructor(playerLayer, walls) {
     this.currentAnimation = 'llama_eat_down'; // default animation on start
     this.playerLayer = playerLayer;
@@ -11,8 +10,8 @@ export class Player {
     this.y = 0;
     this.speed = gameConfig.player.speed;
     this.walls = walls;
-    this.velocity_x = 0;
-    this.velocity_y = 0;
+    this.velocityX = 0;
+    this.velocityY = 0;
   }
 
   async init() {
@@ -37,10 +36,10 @@ export class Player {
   render(x, y) {
     this.x = x;
     this.y = y;
-    this.sync_position();
+    this.syncPosition();
   }
 
-  change_animation(animation) {
+  changeAnimation(animation) {
     if (!this.spritesheet.animations[animation]) {
       console.warn(`Unknown animation: ${animation}`);
       return;
@@ -52,56 +51,55 @@ export class Player {
     this.animatedSprite.animationSpeed = 0.13;
   }
 
-  move(x_offset, y_offset) {
-  let movedX = x_offset;
-  let movedY = y_offset;
+  move(xOffset, yOffset) {
+    let movedX = xOffset;
+    let movedY = yOffset;
 
-  // Normalize diagonal movement
-  if (x_offset !== 0 && y_offset !== 0) {
-    movedX /= Math.SQRT2;
-    movedY /= Math.SQRT2;
+    // Normalize diagonal movement
+    if (xOffset !== 0 && yOffset !== 0) {
+      movedX /= Math.SQRT2;
+      movedY /= Math.SQRT2;
+    }
+
+    let actualMovedX = 0;
+    let actualMovedY = 0;
+
+    if (!this.checkCollision(movedX, 0)) {
+      this.x += movedX;
+      actualMovedX = movedX;
+    }
+
+    if (!this.checkCollision(0, movedY)) {
+      this.y += movedY;
+      actualMovedY = movedY;
+    }
+
+    this.velocityX = actualMovedX;
+    this.velocityY = actualMovedY;
+
+    this.syncPosition();
   }
-
-  let actualMovedX = 0;
-  let actualMovedY = 0;
-
-  if (!this.checkCollision(movedX, 0)) {
-    this.x += movedX;
-    actualMovedX = movedX;
-  }
-
-  if (!this.checkCollision(0, movedY)) {
-    this.y += movedY;
-    actualMovedY = movedY;
-  }
-
-  this.velocity_x = actualMovedX;
-  this.velocity_y = actualMovedY;
-
-  this.sync_position();
-}
-
 
   getVelocity() {
-    return { velocity_x: this.velocity_x, velocity_y: this.velocity_y };
+    return { velocityX: this.velocityX, velocityY: this.velocityY };
   }
 
-  sync_position() {
+  syncPosition() {
     this.spriteContainer.x = this.x;
     this.spriteContainer.y = this.y;
   }
 
-  getBounds(x_offset = 0, y_offset = 0) {
+  getBounds(xOffset = 0, yOffset = 0) {
     return {
-      x: Math.round(this.x + x_offset),
-      y: Math.round(this.y + y_offset),
+      x: Math.round(this.x + xOffset),
+      y: Math.round(this.y + yOffset),
       width: gameConfig.player.width,
       height: gameConfig.player.height
     };
   }
 
-  checkCollision(x_offset, y_offset) {
-    const playerBounds = this.getBounds(x_offset, y_offset);
+  checkCollision(xOffset, yOffset) {
+    const playerBounds = this.getBounds(xOffset, yOffset);
     for (const wall of this.walls) {
       const wallBounds = wall.getBounds();
       if (

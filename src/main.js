@@ -1,12 +1,10 @@
-import { Application } from "pixi.js";
+import { Application, Container } from "pixi.js";
 import { Player } from "./Player";
 import { Controller } from "./Controller.js";
 import { Wall } from "./Wall.js";
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Projectile } from "./Projectile.js";
-import { Container } from "pixi.js";
 import { Bat } from "./Npc.js";
-
 
 (async () => {
   const app = new Application();
@@ -16,63 +14,80 @@ import { Bat } from "./Npc.js";
     backgroundColor: gameConfig.game.backgroundColor,
     backgroundAlpha: 0.8
   });
-  const walls = [new Wall(app, 0, 50, 0 + gameConfig.game.UIHeight, app.canvas.height), new Wall(app, 0, app.canvas.width, gameConfig.game.UIHeight, gameConfig.game.UIHeight + 50), new Wall(app, app.canvas.width - 50, app.canvas.width, gameConfig.game.UIHeight, app.canvas.height), new Wall(app, 0, app.canvas.width, app.canvas.height - 50, app.canvas.height), new Wall(app, 250, 300, 500,600)]
-  walls.forEach((wall) => {
-    wall.render();
-  })
 
-  const projectile_layer = new Container();
-  const player_layer = new Container();
+  // Create walls
+  const walls = [
+    new Wall(app, 0, 50, gameConfig.game.UIHeight, app.canvas.height),
+    new Wall(app, 0, app.canvas.width, gameConfig.game.UIHeight, gameConfig.game.UIHeight + 50),
+    new Wall(app, app.canvas.width - 50, app.canvas.width, gameConfig.game.UIHeight, app.canvas.height),
+    new Wall(app, 0, app.canvas.width, app.canvas.height - 50, app.canvas.height),
+    new Wall(app, 250, 300, 500, 600)
+  ];
+  walls.forEach(wall => wall.render());
 
-  const player = new Player(player_layer, walls);
-  await player.init();  // <-- MUST await init() to load sprite before spawn
-  document.body.appendChild(app.canvas);
+  // Create layers
+  const projectileLayer = new Container();
+  const playerLayer = new Container();
+
+  // Player
+  const player = new Player(playerLayer, walls);
+  await player.init();
   player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
-  let projectiles = [];
-  let npcs = [];
 
-  const controller = new Controller(document, player, projectiles, projectile_layer);
+  // Add canvas to DOM
+  document.body.appendChild(app.canvas);
+
+  // Game entities
+  const projectiles = [];
+  const npcs = [];
+
+  // Controller
+  const controller = new Controller(document, player, projectiles, projectileLayer);
   controller.addEventListeners();
 
-
+  // Main game container
   const gameContainer = new Container();
-
-
-
-  gameContainer.addChild(projectile_layer); // behind
-  gameContainer.addChild(player_layer);     // in front
-
+  gameContainer.addChild(projectileLayer); // behind
+  gameContainer.addChild(playerLayer);     // in front
   app.stage.addChild(gameContainer);
 
-  npcs.push(new Bat(player_layer, 500, 300));
-  await npcs[0].init();
+  // Spawn NPCs
+  const bat1 = new Bat(player, playerLayer, 500, 300);
+  const bat2 = new Bat(player, playerLayer, 400, 300);
+  await bat1.init();
+  await bat2.init();
+  npcs.push(bat1, bat2);
 
-  npcs.push(new Bat(player_layer, 400, 300));
-  await npcs[1].init();
-  
+  // Add player sprite to layer
+  playerLayer.addChild(player.spriteContainer);
 
-  player_layer.addChild(player.spriteContainer);
+  // Game loop
   app.ticker.add(() => {
+    // Clean up inactive projectiles
     for (let i = projectiles.length - 1; i >= 0; i--) {
-      if (projectiles[i].sprite == null) {
+      if (!projectiles[i].sprite) {
         projectiles.splice(i, 1);
       }
     }
+
+    // Clean up destroyed NPCs
     for (let i = npcs.length - 1; i >= 0; i--) {
-      if (npcs[i].spriteContainer == null) {
+      if (!npcs[i].spriteContainer) {
         npcs.splice(i, 1);
       }
     }
-    npcs.forEach((npc) => {
+
+    // Update NPC behavior
+    npcs.forEach(npc => {
       npc.action(player.getPosition());
-    })
-    projectiles.forEach((projectile) => {
+    });
+
+    // Update projectiles
+    projectiles.forEach(projectile => {
       projectile.update(walls, npcs);
-    })
+    });
 
-    controller.update()
-  })
-
-
+    // Update player movement
+    controller.update();
+  });
 })();
-
