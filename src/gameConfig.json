@@ -10,5 +10,11 @@
     "width": 50,
     "projectileSpeed": 10,
     "projectileRange": 450
+  },
+  "bat": {
+    "health": 5,
+    "speed": 12,
+    "damage": 1,
+    "attackRange": 50
   }
 }

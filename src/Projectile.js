@@ -69,44 +69,57 @@ export class Projectile {
       this.sprite.y = this.y;
     }
   }
-  update(walls) {
-  if (!this.sprite) return;
+  update(walls, npcs) {
+    if (!this.sprite) return;
 
-  this.distance_travelled += Math.sqrt(this.velocity_x ** 2 + this.velocity_y ** 2);
-  if (this.distance_travelled > this.range) {
-    this.destroy();
-    return;
-  }
+    this.distance_travelled += Math.sqrt(this.velocity_x ** 2 + this.velocity_y ** 2);
+    if (this.distance_travelled > this.range) {
+      this.destroy();
+      return;
+    }
 
-  this._movePosition();
+    this._movePosition();
 
-  if (this._checkCollision(walls)) {
-    this.destroy();
-  }
-}
-
-
-  _checkCollision(walls) {
-  const projectile_bounds = {
-    x: this.x - this.radius,
-    y: this.y - this.radius,
-    width: this.radius * 2,
-    height: this.radius * 2
-  };
-
-  for (const wall of walls) {
-    const wall_bounds = wall.getBounds();
-    if (
-      projectile_bounds.x < wall_bounds.x + wall_bounds.width &&
-      projectile_bounds.x + projectile_bounds.width > wall_bounds.x &&
-      projectile_bounds.y < wall_bounds.y + wall_bounds.height &&
-      projectile_bounds.y + projectile_bounds.height > wall_bounds.y
-    ) {
-      return true; // ✅ Exit early on first collision
+    if (this._checkCollision(walls, npcs)) {
+      this.destroy();
     }
   }
 
-  return false; // ✅ Only return false if no collision found
-}
+
+  _checkCollision(walls, npcs) {
+    const projectile_bounds = {
+      x: this.x - this.radius,
+      y: this.y - this.radius,
+      width: this.radius * 2,
+      height: this.radius * 2
+    };
+
+    for (const wall of walls) {
+      const wall_bounds = wall.getBounds();
+      if (
+        projectile_bounds.x < wall_bounds.x + wall_bounds.width &&
+        projectile_bounds.x + projectile_bounds.width > wall_bounds.x &&
+        projectile_bounds.y < wall_bounds.y + wall_bounds.height &&
+        projectile_bounds.y + projectile_bounds.height > wall_bounds.y
+      ) {
+        return true; // ✅ Exit early on first collision
+      }
+    }
+
+    for(const npc of npcs){
+      const npc_bounds = npc.getBounds();
+      if (
+        projectile_bounds.x < npc_bounds.x + npc_bounds.width &&
+        projectile_bounds.x + projectile_bounds.width > npc_bounds.x &&
+        projectile_bounds.y < npc_bounds.y + npc_bounds.height &&
+        projectile_bounds.y + projectile_bounds.height > npc_bounds.y
+      ) {
+        npc.takeDamage(1);
+        return true; // ✅ Exit early on first collision
+      }
+    }
+
+    return false; // ✅ Only return false if no collision found
+  }
 
 }

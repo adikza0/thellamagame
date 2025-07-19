@@ -5,6 +5,7 @@ import { Wall } from "./Wall.js";
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Projectile } from "./Projectile.js";
 import { Container } from "pixi.js";
+import { Bat } from "./Npc.js";
 
 
 (async () => {
@@ -28,6 +29,7 @@ import { Container } from "pixi.js";
   document.body.appendChild(app.canvas);
   player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
   let projectiles = [];
+  let npcs = [];
 
   const controller = new Controller(document, player, projectiles, projectile_layer);
   controller.addEventListeners();
@@ -42,6 +44,13 @@ import { Container } from "pixi.js";
 
   app.stage.addChild(gameContainer);
 
+  npcs.push(new Bat(player_layer, 500, 500));
+  await npcs[0].init();
+
+  npcs.push(new Bat(player_layer, 400, 500));
+  await npcs[1].init();
+  
+
   player_layer.addChild(player.spriteContainer);
   app.ticker.add(() => {
     for (let i = projectiles.length - 1; i >= 0; i--) {
@@ -49,8 +58,14 @@ import { Container } from "pixi.js";
         projectiles.splice(i, 1);
       }
     }
+    for (let i = npcs.length - 1; i >= 0; i--) {
+      if (npcs[i].spriteContainer == null) {
+        npcs.splice(i, 1);
+      }
+    }
+
     projectiles.forEach((projectile) => {
-      projectile.update(walls);
+      projectile.update(walls, npcs);
     })
 
     controller.update()
