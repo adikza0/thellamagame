@@ -3,7 +3,8 @@
     "width" : 900,
     "height" : 750,
     "backgroundColor" :  "0x177cba",
-    "UIHeight" : 100
+    "UIHeight" : 100,
+    "UIBackgroundColor": "0x000000"
   },
   "player": {
     "height" : 65,
@@ -17,5 +18,9 @@
     "health": 1,
     "speed": 3,
     "attackRange": 50
+  },
+  "spawner": {
+    "spawnInterval": 2000,
+    "spawnCount": 2
   }
 }

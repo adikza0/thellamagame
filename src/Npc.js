@@ -10,6 +10,7 @@ class Npc {
     this.health = health;
     this.x = x;
     this.y = y;
+    this.init();
   }
 
   async init(texturePath, animationData, animationName) {
@@ -105,7 +106,7 @@ export class Bat extends Npc {
     this.switchAnimationSide();
   }
 
-  action(playerPosition) {
+  action(playerPosition = { x: 0, y: 0 }) {
     this.move(playerPosition);
     this.syncPosition();
   }
@@ -177,18 +178,27 @@ export class Bat extends Npc {
   }
 
   switchAnimationSide() {
-    if (this.currentAnimation === 'left') {
-      this.currentAnimation = 'right';
-      this.animatedSprite.scale.x = 1;
+  if (!this.animatedSprite) return;
+
+  if (this.currentAnimation === 'left') {
+    this.currentAnimation = 'right';
+    this.animatedSprite.scale.x = 1;
+
+    if (this.dynamiteSprite) {
       this.dynamiteSprite.x = 0;
-      this.dynamiteSprite.y = 10
+      this.dynamiteSprite.y = 10;
       this.dynamiteSprite.rotation = 4.5;
-    } else if (this.currentAnimation === 'right') {
-      this.currentAnimation = 'left';
-      this.animatedSprite.scale.x = -1;
+    }
+  } else if (this.currentAnimation === 'right') {
+    this.currentAnimation = 'left';
+    this.animatedSprite.scale.x = -1;
+
+    if (this.dynamiteSprite) {
       this.dynamiteSprite.x = 0;
-      this.dynamiteSprite.y = 10
+      this.dynamiteSprite.y = 10;
       this.dynamiteSprite.rotation = 4.5;
     }
   }
+}
+
 }
