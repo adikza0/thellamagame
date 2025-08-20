@@ -21,6 +21,10 @@
   },
   "spawner": {
     "spawnInterval": 2000,
-    "spawnCount": 2
+    "spawnCount": 1
+  },
+  "turret": {
+    "fireRate": 1,
+    "health": 1
   }
 }
