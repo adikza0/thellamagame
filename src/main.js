@@ -1,7 +1,7 @@
 import { Application, Container, Graphics } from "pixi.js";
 import { Player } from "./Player";
 import { Controller } from "./Controller.js";
-import { Wall } from "./Wall.js";
+import { WallManager } from "./WallManager.js";
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Projectile } from "./Projectile.js";
 import { Spawner } from "./Spawner.js";
@@ -14,16 +14,15 @@ import { Spawner } from "./Spawner.js";
     backgroundColor: gameConfig.game.backgroundColor,
     backgroundAlpha: 0.8
   });
+  const wallManager = new WallManager(app);
+  wallManager.create(0, 50, gameConfig.game.UIHeight, app.canvas.height)
+  wallManager.create(0, app.canvas.width, gameConfig.game.UIHeight, gameConfig.game.UIHeight + 50)
+  wallManager.create(app.canvas.width - 50, app.canvas.width, gameConfig.game.UIHeight, app.canvas.height)
+  wallManager.create(0, app.canvas.width, app.canvas.height - 50, app.canvas.height)
+  wallManager.create(250, 300, 500, 600)
+  wallManager.render();
 
-  // Create walls
-  const walls = [
-    new Wall(app, 0, 50, gameConfig.game.UIHeight, app.canvas.height),
-    new Wall(app, 0, app.canvas.width, gameConfig.game.UIHeight, gameConfig.game.UIHeight + 50),
-    new Wall(app, app.canvas.width - 50, app.canvas.width, gameConfig.game.UIHeight, app.canvas.height),
-    new Wall(app, 0, app.canvas.width, app.canvas.height - 50, app.canvas.height),
-    new Wall(app, 250, 300, 500, 600)
-  ];
-  walls.forEach(wall => wall.render());
+  const walls = wallManager.walls
 
   // Create layers
   const uiLayer = new Container();
@@ -31,8 +30,12 @@ import { Spawner } from "./Spawner.js";
   const playerLayer = new Container();
   const uiBackground = new Graphics().rect(0, 0, app.canvas.width, gameConfig.game.UIHeight).fill(gameConfig.game.UIBackgroundColor);
   uiLayer.addChild(uiBackground)
+  
+  /*
   uiLayer.width = app.canvas.width;
   uiLayer.height = gameConfig.game.UIHeight;
+  */
+ 
   // Player
   const player = new Player(playerLayer, walls);
   await player.init();
@@ -47,7 +50,6 @@ import { Spawner } from "./Spawner.js";
 
   // Game entities
   const projectiles = [];
-  const npcs = [];
 
   // Controller
   const controller = new Controller(document, player, projectiles, projectileLayer);
@@ -60,14 +62,6 @@ import { Spawner } from "./Spawner.js";
   app.stage.addChild(gameContainer);
   app.stage.addChild(uiLayer); // UI layer
 
-  /*
-  // Spawn NPCs
-  const bat1 = new Bat(player, playerLayer, 0, 300);
-  await bat1.init();
-  const bat2 = new Bat(player, playerLayer, 500, 300);
-  await bat2.init();
-  npcs.push(bat1,bat2);
-*/
 
   // Add player sprite to layer
   playerLayer.addChild(player.spriteContainer);
