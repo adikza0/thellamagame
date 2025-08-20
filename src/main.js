@@ -90,7 +90,7 @@ import { Spawner } from "./Spawner.js";
 
     // Update projectiles
     projectiles.forEach(projectile => {
-      projectile.update(walls, npcs);
+      projectile.update(wallManager, npcs);
     });
 
     // Update player

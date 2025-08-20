@@ -77,7 +77,7 @@ export class Projectile {
     }
   }
 
-  update(walls, npcs) {
+  update(wallManager, npcs) {
     if (!this.sprite) return;
 
     this.distanceTravelled += Math.sqrt(this.velocityX ** 2 + this.velocityY ** 2);
@@ -88,30 +88,22 @@ export class Projectile {
 
     this._movePosition();
 
-    if (this._checkCollision(walls, npcs)) {
+    if (this._checkCollision(wallManager, npcs)) {
       this.destroy();
     }
   }
 
-  _checkCollision(walls, npcs) {
+  _checkCollision(wallManager, npcs) {
     const projectileBounds = {
       x: this.x - this.radius,
       y: this.y - this.radius,
       width: this.radius * 2,
       height: this.radius * 2
     };
+    if(wallManager.intersects(projectileBounds)){
+      return true
+    };
 
-    for (const wall of walls) {
-      const wallBounds = wall.getBounds();
-      if (
-        projectileBounds.x < wallBounds.x + wallBounds.width &&
-        projectileBounds.x + projectileBounds.width > wallBounds.x &&
-        projectileBounds.y < wallBounds.y + wallBounds.height &&
-        projectileBounds.y + projectileBounds.height > wallBounds.y
-      ) {
-        return true;
-      }
-    }
 
     for (const npc of npcs) {
       const npcBounds = npc.getBounds();
