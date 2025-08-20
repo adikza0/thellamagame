@@ -3,13 +3,13 @@ import gameConfig from './gameConfig.json' assert { type: "json" };
 import llamaWalkData from '/src/public/spritesheet/llama_movement.json' assert { type: 'json' };
 
 export class Player {
-  constructor(playerLayer, walls) {
+  constructor(playerLayer, wallManager) {
     this.currentAnimation = 'llama_eat_down'; // default animation on start
     this.playerLayer = playerLayer;
     this.x = 0;
     this.y = 0;
     this.speed = gameConfig.player.speed;
-    this.walls = walls;
+    this.wallManager = wallManager;
     this.velocityX = 0;
     this.velocityY = 0;
     this.health = gameConfig.player.health;
@@ -100,19 +100,9 @@ export class Player {
   }
 
   checkCollision(xOffset, yOffset) {
+
     const playerBounds = this.getBounds(xOffset, yOffset);
-    for (const wall of this.walls) {
-      const wallBounds = wall.getBounds();
-      if (
-        playerBounds.x < wallBounds.x + wallBounds.width &&
-        playerBounds.x + playerBounds.width > wallBounds.x &&
-        playerBounds.y < wallBounds.y + wallBounds.height &&
-        playerBounds.y + playerBounds.height > wallBounds.y
-      ) {
-        return true; // Collision detected
-      }
-    }
-    return false;
+    return this.wallManager.intersects(playerBounds);
   }
 
   getPosition() {

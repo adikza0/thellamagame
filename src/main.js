@@ -37,7 +37,7 @@ import { Spawner } from "./Spawner.js";
   */
  
   // Player
-  const player = new Player(playerLayer, walls);
+  const player = new Player(playerLayer, wallManager);
   await player.init();
   player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
 
