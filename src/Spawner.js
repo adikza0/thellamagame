@@ -1,5 +1,5 @@
 import { Bat } from './npc/Bat.js';
-import { Turret } from './npc/Turret.js';
+import { Trump } from './npc/Trump.js';
 import gameConfig from '/src/gameConfig.json' assert { type: 'json' };
 
 export class Spawner {
@@ -11,9 +11,14 @@ export class Spawner {
     this.spawnInterval = gameConfig.spawner.spawnInterval;
   }
 
-  spawn() {
-    this.npcs.push(new Bat(this.player, this.layer));
-    this.npcs.push(new Turret(this.player, this.layer))
+  async spawn() {
+    const bat = new Bat(this.player, this.layer);
+    await bat.init();
+    this.npcs.push(bat);
+
+    const trump = new Trump(this.player, this.layer);
+    await trump.init();
+    this.npcs.push(trump);
   }
 
   removeDestroyedNpcs() {

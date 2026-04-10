@@ -7,7 +7,6 @@ export class Npc {
     this.health = health;
     this.x = x;
     this.y = y;
-    this.init(); // This may be overridden by subclasses
   }
 
   async init(texturePath, animationData, animationName) {
@@ -18,6 +17,7 @@ export class Npc {
     await this.spritesheet.parse();
 
     const frames = this.spritesheet.animations[animationName];
+    
     this.animatedSprite = new AnimatedSprite(frames);
     this.animatedSprite.anchor.set(0.5);
 
@@ -98,5 +98,23 @@ export class Npc {
       (this.spriteContainer.x - position.x) ** 2 +
       (this.spriteContainer.y - position.y) ** 2
     );
+  }
+
+  switchAnimationSide() {
+    if (!this.animatedSprite) return;
+
+    if (this.currentAnimation === 'left') {
+      this.currentAnimation = 'right';
+      this.animatedSprite.scale.x = 1;
+    } else if (this.currentAnimation === 'right') {
+      this.currentAnimation = 'left';
+      this.animatedSprite.scale.x = -1;
+    }
+
+    if (this.dynamiteSprite) {
+      this.dynamiteSprite.x = 0;
+      this.dynamiteSprite.y = 10;
+      this.dynamiteSprite.rotation = 4.5;
+    }
   }
 }

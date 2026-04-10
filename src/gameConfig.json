@@ -23,7 +23,7 @@
     "spawnInterval": 2000,
     "spawnCount": 1
   },
-  "turret": {
+  "trump": {
     "fireRate": 1,
     "health": 3,
     "destroyRange": 50

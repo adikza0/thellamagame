@@ -1,28 +1,22 @@
 import { Npc } from "./Npc";
 import gameConfig from '/src/gameConfig.json' assert { type: 'json' };
+import trumpAnimationData from '/src/public/spritesheet/trump.json' assert { type: 'json' };
 import { Graphics, Container } from "pixi.js";
 
 export class
-  Turret extends Npc {
+  Trump extends Npc {
   constructor(player, layer, x = 0, y = 0) {
-    const randomPosition = Turret.generateRandomPosition();
-    super(player, layer, gameConfig.turret.health, randomPosition.x, randomPosition.y);
-    this.fireRate = gameConfig.turret.fireRate;
+    const randomPosition = Trump.generateRandomPosition();
+    super(player, layer, gameConfig.trump.health, randomPosition.x, randomPosition.y);
+    this.fireRate = gameConfig.trump.fireRate;
+    this.currentAnimation = 'right';
   }
 
-  init() {
-    this.spriteContainer = new Container();
-    this.layer.addChild(this.spriteContainer);
-
-    // Draw the turret base
-    this.base = new Graphics();
-    this.base.beginFill(0x555555);
-    this.base.drawCircle(0, 0, 15);
-    this.base.endFill();
-
-    this.spriteContainer.addChild(this.base);
-
-    this.syncPosition();
+  async init() {
+    await super.init('/src/public/spritesheet/trump.png', trumpAnimationData, 'looking');
+    console.log(trumpAnimationData.animations);
+    this.spriteContainer.width = 200;
+    this.spriteContainer.height = 200;
   }
   static generateRandomPosition() {
     const width = gameConfig.game.width;
@@ -44,7 +38,10 @@ export class
   
 
   action() {
-    if(this.calculateDistanceFromPlayer() < gameConfig.turret.destroyRange) {
+    //preaim -> aimed -> fire -> preaim -> aimed -> fire
+    
+    
+    if(this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
       this.destroy();
     }
   }

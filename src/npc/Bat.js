@@ -99,21 +99,5 @@ export class Bat extends Npc {
     return { x: velocityX, y: velocityY };
   }
 
-  switchAnimationSide() {
-    if (!this.animatedSprite) return;
-
-    if (this.currentAnimation === 'left') {
-      this.currentAnimation = 'right';
-      this.animatedSprite.scale.x = 1;
-    } else if (this.currentAnimation === 'right') {
-      this.currentAnimation = 'left';
-      this.animatedSprite.scale.x = -1;
-    }
-
-    if (this.dynamiteSprite) {
-      this.dynamiteSprite.x = 0;
-      this.dynamiteSprite.y = 10;
-      this.dynamiteSprite.rotation = 4.5;
-    }
-  }
+  
 }
