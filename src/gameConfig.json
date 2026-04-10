@@ -25,6 +25,7 @@
   },
   "turret": {
     "fireRate": 1,
-    "health": 1
+    "health": 3,
+    "destroyRange": 50
   }
 }

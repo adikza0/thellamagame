@@ -84,13 +84,6 @@ export class Bat extends Npc {
     explosionSprite.onComplete = () => explosionSprite.destroy();
   }
 
-  calculateDistanceFromPlayer() {
-    const position = this.player.getPosition();
-    return Math.sqrt(
-      (this.spriteContainer.x - position.x) ** 2 +
-      (this.spriteContainer.y - position.y) ** 2
-    );
-  }
 
   calculateVelocity(playerPosition) {
     const distanceX = playerPosition.x - this.spriteContainer.x;

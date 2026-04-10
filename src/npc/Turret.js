@@ -41,8 +41,11 @@ export class
 
     return {x, y};
   }
+  
 
   action() {
-
+    if(this.calculateDistanceFromPlayer() < gameConfig.turret.destroyRange) {
+      this.destroy();
+    }
   }
 }

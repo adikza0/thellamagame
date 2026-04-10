@@ -34,34 +34,36 @@ export class Npc {
     this.syncPosition();
   }
 
+
+
   takeDamage(damage) {
     this.health -= damage;
     if (this.health <= 0) this.destroy();
   }
 
   getBounds() {
-  if (!this.spriteContainer) return { x: this.x, y: this.y, width: 0, height: 0 };
+    if (!this.spriteContainer) return { x: this.x, y: this.y, width: 0, height: 0 };
 
-  if (this.animatedSprite) {
-    return {
-      x: this.spriteContainer.x - this.animatedSprite.width / 2,
-      y: this.spriteContainer.y - this.animatedSprite.height / 2,
-      width: this.animatedSprite.width,
-      height: this.animatedSprite.height
-    };
+    if (this.animatedSprite) {
+      return {
+        x: this.spriteContainer.x - this.animatedSprite.width / 2,
+        y: this.spriteContainer.y - this.animatedSprite.height / 2,
+        width: this.animatedSprite.width,
+        height: this.animatedSprite.height
+      };
+    }
+
+    if (this.base) { // For graphics-based NPCs like Turret
+      return {
+        x: this.spriteContainer.x - this.base.width / 2,
+        y: this.spriteContainer.y - this.base.height / 2,
+        width: this.base.width,
+        height: this.base.height
+      };
+    }
+
+    return { x: this.spriteContainer.x, y: this.spriteContainer.y, width: 0, height: 0 };
   }
-
-  if (this.base) { // For graphics-based NPCs like Turret
-    return {
-      x: this.spriteContainer.x - this.base.width / 2,
-      y: this.spriteContainer.y - this.base.height / 2,
-      width: this.base.width,
-      height: this.base.height
-    };
-  }
-
-  return { x: this.spriteContainer.x, y: this.spriteContainer.y, width: 0, height: 0 };
-}
 
 
   destroy() {
@@ -88,5 +90,13 @@ export class Npc {
     if (this.isDestroyed || !this.spriteContainer) return;
     this.spriteContainer.x = this.x;
     this.spriteContainer.y = this.y;
+  }
+  
+  calculateDistanceFromPlayer() {
+    const position = this.player.getPosition();
+    return Math.sqrt(
+      (this.spriteContainer.x - position.x) ** 2 +
+      (this.spriteContainer.y - position.y) ** 2
+    );
   }
 }
