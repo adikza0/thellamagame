@@ -49,7 +49,7 @@ export class
 
 
   action() {
-  this.tick++;          // ❗ REQUIRED
+  this.tick++;         
 
   this.manageAnimations();
 
@@ -57,11 +57,22 @@ export class
     this.destroy();
   }
 }
+  manageSwitchingSides(){
+    if(this.currentAnimation === 'right' && this.player.x < this.spriteContainer.x) {
+      this.switchAnimationSide();
+      this.currentAnimation = 'left';
+      
+    }else if(this.currentAnimation === 'left' && this.player.x > this.spriteContainer.x) {
+      this.switchAnimationSide();
+      this.currentAnimation = 'right';
 
+    }
+    console.log(this.spriteContainer.x)
+  }
   manageAnimations() {
 
   if (this.phase === "idling") {
-
+    this.manageSwitchingSides();
     if (this.tick === 1) {
       this.animatedSprite.gotoAndStop(0);
     }
@@ -73,7 +84,7 @@ export class
 
 
   } else if (this.phase === "aiming") {
-
+    this.manageSwitchingSides();
     if (this.tick === 1) {
       this.animatedSprite.gotoAndStop(1);
     }

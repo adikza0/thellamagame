@@ -14,7 +14,7 @@ export class Spawner {
   async spawn() {
     const bat = new Bat(this.player, this.layer);
     await bat.init();
-    this.npcs.push(bat);
+    this.npcs.push(bat);wd
 
     const trump = new Trump(this.player, this.layer);
     await trump.init();
