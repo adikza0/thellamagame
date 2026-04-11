@@ -1,7 +1,7 @@
 import { Npc } from "./Npc";
 import gameConfig from '/src/gameConfig.json' assert { type: 'json' };
 import trumpAnimationData from '/src/public/spritesheet/trump.json' assert { type: 'json' };
-import { Graphics, Container } from "pixi.js";
+import { Graphics, Container, Spritesheet } from "pixi.js";
 
 export class
   Trump extends Npc {
@@ -10,13 +10,23 @@ export class
     super(player, layer, gameConfig.trump.health, randomPosition.x, randomPosition.y);
     this.fireRate = gameConfig.trump.fireRate;
     this.currentAnimation = 'right';
+
+
   }
 
   async init() {
     await super.init('/src/public/spritesheet/trump.png', trumpAnimationData, 'looking');
-    console.log(trumpAnimationData.animations);
-    this.spriteContainer.width = 200;
-    this.spriteContainer.height = 200;
+
+    this.animatedSprite.stop();
+    this.animatedSprite.loop = false;
+
+    this.animatedSprite.width = 70;
+    this.animatedSprite.height = 90;
+
+    this.animatedSprite.gotoAndStop(0);
+
+    this.phase = "idling";
+    this.tick = 0;
   }
   static generateRandomPosition() {
     const width = gameConfig.game.width;
@@ -33,16 +43,77 @@ export class
     const x = Math.random() * (maxX - minX) + minX;
     const y = Math.random() * (maxY - minY) + minY;
 
-    return {x, y};
+    return { x, y };
   }
-  
+
+
 
   action() {
-    //preaim -> aimed -> fire -> preaim -> aimed -> fire
-    
-    
-    if(this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
-      this.destroy();
-    }
+  this.tick++;          // ❗ REQUIRED
+
+  this.manageAnimations();
+
+  if (this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
+    this.destroy();
   }
+}
+
+  manageAnimations() {
+
+  if (this.phase === "idling") {
+
+    if (this.tick === 1) {
+      this.animatedSprite.gotoAndStop(0);
+    }
+
+    if (this.tick >= gameConfig.trump.idleDuration) {
+      this.phase = "aiming";
+      this.tick = 0;
+    }
+
+
+  } else if (this.phase === "aiming") {
+
+    if (this.tick === 1) {
+      this.animatedSprite.gotoAndStop(1);
+    }
+
+    if (this.tick >= gameConfig.trump.aimDuration) {
+      this.phase = "preparing";
+      this.tick = 0;
+    }
+
+
+  } else if (this.phase === "preparing") {
+
+    if (this.tick === 1) {
+      this.animatedSprite.gotoAndStop(2);
+    }
+
+    if (this.tick >= gameConfig.trump.preparingDuration) {
+      this.phase = "firing";
+      this.tick = 0;
+    }
+
+
+  } else if (this.phase === "firing") {
+
+  if (this.tick === 1) {
+    this.animatedSprite.textures = this.spritesheet.animations.firing;
+    this.animatedSprite.loop = true;
+    this.animatedSprite.animationSpeed = 0.2;
+    this.animatedSprite.play();
+  }
+
+  if (this.tick >= gameConfig.trump.firingDuration) {
+    this.animatedSprite.stop();
+
+    this.animatedSprite.textures = this.spritesheet.animations.looking;
+    this.animatedSprite.gotoAndStop(0);
+
+    this.phase = "idling";
+    this.tick = 0;
+  }
+}
+}
 }

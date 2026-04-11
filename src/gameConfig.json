@@ -26,6 +26,10 @@
   "trump": {
     "fireRate": 1,
     "health": 3,
-    "destroyRange": 50
+    "destroyRange": 50,
+    "idleDuration": 200,
+    "aimDuration": 250,
+    "preparingDuration": 200,
+    "firingDuration": 200
   }
 }

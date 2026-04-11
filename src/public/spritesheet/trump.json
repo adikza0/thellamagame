@@ -1,35 +1,35 @@
 {
   "frames": {
     "trump_0": {
-      "frame": { "x": 0, "y": 0, "w": 70, "h": 90 },
+      "frame": { "x": 0, "y": 0, "w": 68, "h": 90 },
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 90 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 68, "h": 90 },
       "sourceSize": { "w": 70, "h": 90 }
     },
     "trump_1": {
-      "frame": { "x": 90, "y": 0, "w": 70, "h": 90 },
+      "frame": { "x": 70, "y": 0, "w": 68, "h": 90 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 90 },
       "sourceSize": { "w": 70, "h": 90 }
     },
     "trump_2": {
-      "frame": { "x": 180, "y": 0, "w": 70, "h": 90 },
+      "frame": { "x": 140, "y": 0, "w": 68, "h": 90 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 90 },
       "sourceSize": { "w": 70, "h": 90 }
     },
     "trump_3": {
-      "frame": { "x": 270, "y": 0, "w": 70, "h": 90 },
+      "frame": { "x": 210, "y": 0, "w": 68, "h": 90 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 90 },
       "sourceSize": { "w": 70, "h": 90 }
     },
     "trump_4": {
-      "frame": { "x": 0, "y": 90, "w": 70, "h": 90 },
+      "frame": { "x": 0, "y": 90, "w": 68, "h": 90 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 70, "h": 90 },
