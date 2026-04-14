@@ -9,7 +9,6 @@ export class
     const randomPosition = Trump.generateRandomPosition();
     super(player, layer, gameConfig.trump.health, randomPosition.x, randomPosition.y);
     this.fireRate = gameConfig.trump.fireRate;
-    this.currentAnimation = 'right';
 
 
   }
@@ -23,6 +22,8 @@ export class
     this.animatedSprite.width = 70;
     this.animatedSprite.height = 90;
 
+    this.animatedSprite.anchor.set(0.5);
+    this.spriteContainer.pivot.set(0, 0);
     this.animatedSprite.gotoAndStop(0);
 
     this.phase = "idling";
@@ -54,29 +55,34 @@ export class
 
     this.tick++;
 
-    this.manageAnimations();
+    this.managePhases();
 
     if (this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
       this.destroy();
     }
   }
-  manageSwitchingSides() {
-    if (this.currentAnimation === 'right' && this.player.x < this.spriteContainer.x) {
-      this.switchAnimationSide();
-      this.currentAnimation = 'left';
 
-    } else if (this.currentAnimation === 'left' && this.player.x > this.spriteContainer.x) {
-      this.switchAnimationSide();
-      this.currentAnimation = 'right';
 
+  rotateTowardsPlayer() {
+    const dx = this.player.x - this.spriteContainer.x;
+    const dy = this.player.y - this.spriteContainer.y;
+
+    const angle = Math.atan2(dy, dx);
+
+    // rotate container
+    this.spriteContainer.rotation = angle;
+
+    // flip sprite depending on direction
+    if (Math.cos(angle) < 0) {
+      this.animatedSprite.scale.y = -1;
+    } else {
+      this.animatedSprite.scale.y = 1;
     }
-    console.log(this.spriteContainer.x)
   }
-  manageAnimations() {
 
+  managePhases() {
     if (this.phase === "idling") {
-      this.manageSwitchingSides();
-
+      this.rotateTowardsPlayer();
       if (this.tick >= gameConfig.trump.idleDuration) {
         this.phase = "aiming";
         this.tick = 0;
@@ -84,8 +90,7 @@ export class
       }
 
     } else if (this.phase === "aiming") {
-
-      this.manageSwitchingSides();
+      this.rotateTowardsPlayer();
       if (this.tick >= gameConfig.trump.aimDuration) {
         this.phase = "preparing";
         this.tick = 0;
