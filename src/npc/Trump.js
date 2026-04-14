@@ -1,6 +1,7 @@
 import { Npc } from "./Npc";
 import gameConfig from '/src/gameConfig.json' assert { type: 'json' };
 import trumpAnimationData from '/src/public/spritesheet/trump.json' assert { type: 'json' };
+import { Laser } from "./Laser";
 import { Graphics, Container, Spritesheet } from "pixi.js";
 
 export class
@@ -22,12 +23,17 @@ export class
     this.animatedSprite.width = 70;
     this.animatedSprite.height = 90;
 
-    this.animatedSprite.anchor.set(0.5);
+    this.animatedSprite.anchor.set(0.6);
     this.spriteContainer.pivot.set(0, 0);
     this.animatedSprite.gotoAndStop(0);
 
     this.phase = "idling";
     this.tick = 0;
+
+    this.laser = null;
+    this.laserToX = 0;
+    this.laserToY = 0;
+  
 
     this.animatedSprite.gotoAndStop(0);
   }
@@ -58,7 +64,11 @@ export class
     this.managePhases();
 
     if (this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
+      if(this.laser) {
+        this.laser.destroy();
+      }
       this.destroy();
+      
     }
   }
 
@@ -95,7 +105,8 @@ export class
         this.phase = "preparing";
         this.tick = 0;
         this.animatedSprite.gotoAndStop(2);
-
+        this.laserToX = this.player.x + this.player.spriteContainer.width / 2;
+        this.laserToY = this.player.y + this.player.spriteContainer.height / 2;
       }
 
     } else if (this.phase === "preparing") {
@@ -108,10 +119,17 @@ export class
         this.animatedSprite.loop = true;
         this.animatedSprite.animationSpeed = 0.2;
         this.animatedSprite.play();
+
+        this.laser = new Laser(this.layer, this.spriteContainer.x, this.spriteContainer.y, this.laserToX, this.laserToY);
+        this.laser.init();
+        this.laser.render();
+
       }
 
     } else if (this.phase === "firing") {
-
+      if(this.laser.checkPlayerHit(this.player)){
+        this.player.takeDamage();
+      }
       if (this.tick >= gameConfig.trump.firingDuration) {
         this.animatedSprite.stop();
 
@@ -120,6 +138,7 @@ export class
 
         this.phase = "idling";
         this.tick = 0;
+        this.laser.destroy();
       }
     }
   }

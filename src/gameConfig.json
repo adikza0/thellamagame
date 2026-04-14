@@ -12,7 +12,8 @@
     "projectileSpeed": 10,
     "projectileRange": 450,
     "speed": 4,
-    "health": 2
+    "health": 0,
+    "radius": 12
   },
   "bat": {
     "health": 1,
@@ -20,7 +21,7 @@
     "attackRange": 50
   },
   "spawner": {
-    "spawnInterval": 2000,
+    "spawnInterval": 20000,   
     "spawnCount": 1
   },
   "trump": {
@@ -30,6 +31,6 @@
     "idleDuration": 200,
     "aimDuration": 250,
     "preparingDuration": 200,
-    "firingDuration": 200
+    "firingDuration": 10000   
   }
 }
