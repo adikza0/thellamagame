@@ -27,6 +27,8 @@ export class
 
     this.phase = "idling";
     this.tick = 0;
+
+    this.animatedSprite.gotoAndStop(0);
   }
   static generateRandomPosition() {
     const width = gameConfig.game.width;
@@ -49,20 +51,21 @@ export class
 
 
   action() {
-  this.tick++;         
 
-  this.manageAnimations();
+    this.tick++;
 
-  if (this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
-    this.destroy();
+    this.manageAnimations();
+
+    if (this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
+      this.destroy();
+    }
   }
-}
-  manageSwitchingSides(){
-    if(this.currentAnimation === 'right' && this.player.x < this.spriteContainer.x) {
+  manageSwitchingSides() {
+    if (this.currentAnimation === 'right' && this.player.x < this.spriteContainer.x) {
       this.switchAnimationSide();
       this.currentAnimation = 'left';
-      
-    }else if(this.currentAnimation === 'left' && this.player.x > this.spriteContainer.x) {
+
+    } else if (this.currentAnimation === 'left' && this.player.x > this.spriteContainer.x) {
       this.switchAnimationSide();
       this.currentAnimation = 'right';
 
@@ -71,60 +74,48 @@ export class
   }
   manageAnimations() {
 
-  if (this.phase === "idling") {
-    this.manageSwitchingSides();
-    if (this.tick === 1) {
-      this.animatedSprite.gotoAndStop(0);
+    if (this.phase === "idling") {
+      this.manageSwitchingSides();
+
+      if (this.tick >= gameConfig.trump.idleDuration) {
+        this.phase = "aiming";
+        this.tick = 0;
+        this.animatedSprite.gotoAndStop(1);
+      }
+
+    } else if (this.phase === "aiming") {
+
+      this.manageSwitchingSides();
+      if (this.tick >= gameConfig.trump.aimDuration) {
+        this.phase = "preparing";
+        this.tick = 0;
+        this.animatedSprite.gotoAndStop(2);
+
+      }
+
+    } else if (this.phase === "preparing") {
+
+      if (this.tick >= gameConfig.trump.preparingDuration) {
+        this.phase = "firing";
+        this.tick = 0;
+
+        this.animatedSprite.textures = this.spritesheet.animations.firing;
+        this.animatedSprite.loop = true;
+        this.animatedSprite.animationSpeed = 0.2;
+        this.animatedSprite.play();
+      }
+
+    } else if (this.phase === "firing") {
+
+      if (this.tick >= gameConfig.trump.firingDuration) {
+        this.animatedSprite.stop();
+
+        this.animatedSprite.textures = this.spritesheet.animations.looking;
+        this.animatedSprite.gotoAndStop(0);
+
+        this.phase = "idling";
+        this.tick = 0;
+      }
     }
-
-    if (this.tick >= gameConfig.trump.idleDuration) {
-      this.phase = "aiming";
-      this.tick = 0;
-    }
-
-
-  } else if (this.phase === "aiming") {
-    this.manageSwitchingSides();
-    if (this.tick === 1) {
-      this.animatedSprite.gotoAndStop(1);
-    }
-
-    if (this.tick >= gameConfig.trump.aimDuration) {
-      this.phase = "preparing";
-      this.tick = 0;
-    }
-
-
-  } else if (this.phase === "preparing") {
-
-    if (this.tick === 1) {
-      this.animatedSprite.gotoAndStop(2);
-    }
-
-    if (this.tick >= gameConfig.trump.preparingDuration) {
-      this.phase = "firing";
-      this.tick = 0;
-    }
-
-
-  } else if (this.phase === "firing") {
-
-  if (this.tick === 1) {
-    this.animatedSprite.textures = this.spritesheet.animations.firing;
-    this.animatedSprite.loop = true;
-    this.animatedSprite.animationSpeed = 0.2;
-    this.animatedSprite.play();
   }
-
-  if (this.tick >= gameConfig.trump.firingDuration) {
-    this.animatedSprite.stop();
-
-    this.animatedSprite.textures = this.spritesheet.animations.looking;
-    this.animatedSprite.gotoAndStop(0);
-
-    this.phase = "idling";
-    this.tick = 0;
-  }
-}
-}
 }
