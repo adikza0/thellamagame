@@ -18,7 +18,7 @@ export class Laser {
   }
 
   checkPlayerHit(player) {
-    //if (this.damagedPlayer) return false;
+    if (this.damagedPlayer) return false;
     const dx = this.toX - this.fromX;
     const dy = this.toY - this.fromY;
 
