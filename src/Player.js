@@ -24,8 +24,8 @@ export class Player {
 
     this.animatedSprite = new AnimatedSprite(this.spritesheet.animations[this.currentAnimation]);
     this.animatedSprite.anchor.set(0.5);
-    this.animatedSprite.x = gameConfig.player.width / 2;
-    this.animatedSprite.y = gameConfig.player.height / 2;
+    this.animatedSprite.x = 0;
+    this.animatedSprite.y = 0;
     this.animatedSprite.animationSpeed = 0.12;
     this.animatedSprite.play();
 
@@ -91,13 +91,13 @@ export class Player {
   }
 
   getBounds(xOffset = 0, yOffset = 0) {
-    return {
-      x: Math.round(this.x + xOffset),
-      y: Math.round(this.y + yOffset),
-      width: gameConfig.player.width,
-      height: gameConfig.player.height
-    };
-  }
+  return {
+    x: Math.round(this.x - gameConfig.player.width / 2 + xOffset),
+    y: Math.round(this.y - gameConfig.player.height / 2 + yOffset),
+    width: gameConfig.player.width,
+    height: gameConfig.player.height
+  };
+}
 
   checkCollision(xOffset, yOffset) {
 
@@ -107,8 +107,8 @@ export class Player {
 
   getPosition() {
     return {
-      x: this.spriteContainer.x + this.spriteContainer.width / 2,
-      y: this.spriteContainer.y + this.spriteContainer.height / 2
+      x: this.x,
+      y: this.y
     };
   }
 
