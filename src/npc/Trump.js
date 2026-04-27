@@ -105,8 +105,8 @@ export class
         this.phase = "preparing";
         this.tick = 0;
         this.animatedSprite.gotoAndStop(2);
-        this.laserToX = this.player.x + this.player.spriteContainer.width / 2;
-        this.laserToY = this.player.y + this.player.spriteContainer.height / 2;
+        this.laserToX = this.player.x;
+        this.laserToY = this.player.y;
       }
 
     } else if (this.phase === "preparing") {

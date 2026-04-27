@@ -113,6 +113,7 @@ export class Player {
   }
 
   takeDamage(){
+    console.log("Took damage")
     this.health -= 1;
     if (this.health <= 0) {
       console.log("You DIED")

@@ -12,8 +12,8 @@
     "projectileSpeed": 10,
     "projectileRange": 450,
     "speed": 4,
-    "health": 0,
-    "radius": 12
+    "health": 3,
+    "radius": 18
   },
   "bat": {
     "health": 1,
@@ -28,9 +28,9 @@
     "fireRate": 1,
     "health": 3,
     "destroyRange": 50,
-    "idleDuration": 200,
-    "aimDuration": 250,
-    "preparingDuration": 200,
-    "firingDuration": 10000   
+    "idleDuration": 100,
+    "aimDuration": 100,
+    "preparingDuration": 100,
+    "firingDuration": 100   
   }
 }
