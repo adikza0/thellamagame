@@ -13,7 +13,8 @@
     "projectileRange": 450,
     "speed": 4,
     "health": 3,
-    "radius": 18
+    "radius": 18,
+    "startingCoins": 0
   },
   "bat": {
     "health": 1,
@@ -21,7 +22,7 @@
     "attackRange": 50
   },
   "spawner": {
-    "spawnInterval": 20000,   
+    "spawnInterval": 2500,   
     "spawnCount": 1
   },
   "trump": {

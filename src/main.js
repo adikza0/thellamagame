@@ -30,12 +30,12 @@ import { Spawner } from "./Spawner.js";
   const playerLayer = new Container();
   const uiBackground = new Graphics().rect(0, 0, app.canvas.width, gameConfig.game.UIHeight).fill(gameConfig.game.UIBackgroundColor);
   uiLayer.addChild(uiBackground)
-  
+
   /*
   uiLayer.width = app.canvas.width;
   uiLayer.height = gameConfig.game.UIHeight;
   */
- 
+
   // Player
   const player = new Player(playerLayer, wallManager);
   await player.init();
@@ -67,33 +67,25 @@ import { Spawner } from "./Spawner.js";
   playerLayer.addChild(player.spriteContainer);
 
   // Game loop
-  app.ticker.add(() => {
-    // Cleanup dead projectiles
+  app.ticker.add((ticker) => {
+
+    const delta = ticker.deltaMS;
+
+    // Spawner (NPC + pickups + spawn logic)
+    spawner.update(delta, player);
+
+    // Projectiles
     for (let i = projectiles.length - 1; i >= 0; i--) {
       if (!projectiles[i].sprite) {
         projectiles.splice(i, 1);
       }
     }
-    
-    const npcs = spawner.npcs;
-    
-    spawner.action();
 
-    // Update NPCs, but skip destroyed ones
-    for (let i = npcs.length - 1; i >= 0; i--) {
-      if (npcs[i].isDestroyed) {
-        npcs.splice(i, 1);
-      } else {
-        npcs[i].action(player.getPosition());
-      }
-    }
-
-    // Update projectiles
     projectiles.forEach(projectile => {
-      projectile.update(wallManager, npcs);
+      projectile.update(wallManager, spawner.npcs);
     });
 
-    // Update player
+    // Player input + movement
     controller.update();
   });
 

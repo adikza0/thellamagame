@@ -13,6 +13,7 @@ export class Player {
     this.velocityX = 0;
     this.velocityY = 0;
     this.health = gameConfig.player.health;
+    this.coins = gameConfig.player.startingCoins;
   }
 
   async init() {
@@ -91,13 +92,13 @@ export class Player {
   }
 
   getBounds(xOffset = 0, yOffset = 0) {
-  return {
-    x: Math.round(this.x - gameConfig.player.width / 2 + xOffset),
-    y: Math.round(this.y - gameConfig.player.height / 2 + yOffset),
-    width: gameConfig.player.width,
-    height: gameConfig.player.height
-  };
-}
+    return {
+      x: Math.round(this.x - gameConfig.player.width / 2 + xOffset),
+      y: Math.round(this.y - gameConfig.player.height / 2 + yOffset),
+      width: gameConfig.player.width,
+      height: gameConfig.player.height
+    };
+  }
 
   checkCollision(xOffset, yOffset) {
 
@@ -112,11 +113,16 @@ export class Player {
     };
   }
 
-  takeDamage(){
+  takeDamage() {
     console.log("Took damage")
     this.health -= 1;
     if (this.health <= 0) {
       console.log("You DIED")
     }
+  }
+
+  pickupCoin() {
+    this.coins++;
+    console.log(this.coins);
   }
 }
