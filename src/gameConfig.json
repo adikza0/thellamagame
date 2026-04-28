@@ -4,7 +4,7 @@
     "height" : 750,
     "backgroundColor" :  "0x177cba",
     "UIHeight" : 100,
-    "UIBackgroundColor": "0x000000"
+    "UIBackgroundColor": "0x2e13a6"
   },
   "player": {
     "height" : 65,
@@ -15,7 +15,8 @@
     "health": 3,
     "hitRadius": 20,
     "startingCoins": 0,
-    "pickupRadius": 40
+    "pickupRadius": 40,
+    "maxHealth": 5
   },
   "bat": {
     "health": 1,

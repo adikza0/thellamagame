@@ -37,7 +37,6 @@ export class Pickup {
 
   pickUp() {
     this.destroy();
-    console.log('vzals coin')
   }
 
   calculateDistanceFromPlayer() {

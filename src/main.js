@@ -5,6 +5,7 @@ import { WallManager } from "./WallManager.js";
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Projectile } from "./Projectile.js";
 import { Spawner } from "./Spawner.js";
+import { UI } from "./UI.js";
 
 (async () => {
   const app = new Application();
@@ -31,16 +32,20 @@ import { Spawner } from "./Spawner.js";
   const uiBackground = new Graphics().rect(0, 0, app.canvas.width, gameConfig.game.UIHeight).fill(gameConfig.game.UIBackgroundColor);
   uiLayer.addChild(uiBackground)
 
-  /*
+
   uiLayer.width = app.canvas.width;
   uiLayer.height = gameConfig.game.UIHeight;
-  */
+
 
   // Player
   const player = new Player(playerLayer, wallManager);
   await player.init();
   player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
+  let lastHealth = player.health;
 
+  const ui = new UI(player, uiLayer, gameConfig.game.width, gameConfig.game.UIHeight);
+  await ui.init();
+  ui.renderHealth();
 
   //add NPCs
   const spawner = new Spawner(player, playerLayer);
@@ -57,7 +62,7 @@ import { Spawner } from "./Spawner.js";
 
   // Main game container
   const gameContainer = new Container();
-  gameContainer.addChild(playerLayer);  
+  gameContainer.addChild(playerLayer);
   gameContainer.addChild(projectileLayer);
   app.stage.addChild(gameContainer);
   app.stage.addChild(uiLayer); // UI layer
@@ -87,6 +92,11 @@ import { Spawner } from "./Spawner.js";
 
     // Player input + movement
     controller.update();
+
+    if (player.health !== lastHealth) {
+      ui.renderHealth();
+      lastHealth = player.health;
+    }
   });
 
 })();
