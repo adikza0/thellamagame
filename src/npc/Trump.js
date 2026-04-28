@@ -33,7 +33,7 @@ export class
     this.laser = null;
     this.laserToX = 0;
     this.laserToY = 0;
-  
+
 
     this.animatedSprite.gotoAndStop(0);
   }
@@ -56,7 +56,13 @@ export class
   }
 
 
-
+  destroy() {
+    super.destroy();
+    if (this.laser) {
+      this.laser.destroy();
+    }
+  }
+  
   action() {
 
     this.tick++;
@@ -64,11 +70,11 @@ export class
     this.managePhases();
 
     if (this.calculateDistanceFromPlayer() < gameConfig.trump.destroyRange) {
-      if(this.laser) {
+      if (this.laser) {
         this.laser.destroy();
       }
       this.destroy();
-      
+
     }
   }
 
@@ -127,7 +133,7 @@ export class
       }
 
     } else if (this.phase === "firing") {
-      if(this.laser.checkPlayerHit(this.player)){
+      if (this.laser.checkPlayerHit(this.player)) {
         this.player.takeDamage();
       }
       if (this.tick >= gameConfig.trump.firingDuration) {
