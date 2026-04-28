@@ -17,7 +17,7 @@ export class Npc {
     await this.spritesheet.parse();
 
     const frames = this.spritesheet.animations[animationName];
-    
+
     this.animatedSprite = new AnimatedSprite(frames);
     this.animatedSprite.anchor.set(0.5);
 
@@ -42,7 +42,8 @@ export class Npc {
   }
 
   getBounds() {
-    if (!this.spriteContainer) return { x: this.x, y: this.y, width: 0, height: 0 };
+    if (this.isDestroyed || !this.spriteContainer)
+      return { x: this.x, y: this.y, width: 0, height: 0 };
 
     if (this.animatedSprite) {
       return {
@@ -91,8 +92,9 @@ export class Npc {
     this.spriteContainer.x = this.x;
     this.spriteContainer.y = this.y;
   }
-  
+
   calculateDistanceFromPlayer() {
+
     const position = this.player.getPosition();
     return Math.sqrt(
       (this.spriteContainer.x - position.x) ** 2 +

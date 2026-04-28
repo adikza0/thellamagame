@@ -64,7 +64,7 @@ export class
   }
   
   action() {
-
+    if (this.isDestroyed || !this.spriteContainer) return;
     this.tick++;
 
     this.managePhases();

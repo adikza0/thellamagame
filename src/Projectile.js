@@ -100,13 +100,16 @@ export class Projectile {
       width: this.radius * 2,
       height: this.radius * 2
     };
-    if(wallManager.intersects(projectileBounds)){
+    if (wallManager.intersects(projectileBounds)) {
       return true
     };
 
 
     for (const npc of npcs) {
+      if (npc.isDestroyed) continue;
+
       const npcBounds = npc.getBounds();
+
       if (
         projectileBounds.x < npcBounds.x + npcBounds.width &&
         projectileBounds.x + projectileBounds.width > npcBounds.x &&

@@ -9,7 +9,7 @@ export class Pickup {
     this.layer = layer;
     this.x = x;
     this.y = y;
-    this.pickupRange = gameConfig.player.radius;
+    this.pickupRange = gameConfig.player.pickupRadius;
     this.isDestroyed = false;
   }
 

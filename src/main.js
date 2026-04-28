@@ -57,8 +57,8 @@ import { Spawner } from "./Spawner.js";
 
   // Main game container
   const gameContainer = new Container();
-  gameContainer.addChild(projectileLayer); // behind
-  gameContainer.addChild(playerLayer);     // in front
+  gameContainer.addChild(playerLayer);  
+  gameContainer.addChild(projectileLayer);
   app.stage.addChild(gameContainer);
   app.stage.addChild(uiLayer); // UI layer
 

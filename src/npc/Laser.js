@@ -40,10 +40,10 @@ export class Laser {
     const perpY = py - projection * dirY;
 
     const distance = Math.sqrt(perpX * perpX + perpY * perpY);
-    if (distance < gameConfig.player.radius) {
+    if (distance < gameConfig.player.hitRadius) {
       this.damagedPlayer = true;
     }
-    return distance < gameConfig.player.radius;
+    return distance < gameConfig.player.hitRadius;
 
   }
 

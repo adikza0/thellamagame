@@ -13,8 +13,9 @@
     "projectileRange": 450,
     "speed": 4,
     "health": 3,
-    "radius": 18,
-    "startingCoins": 0
+    "hitRadius": 20,
+    "startingCoins": 0,
+    "pickupRadius": 40
   },
   "bat": {
     "health": 1,

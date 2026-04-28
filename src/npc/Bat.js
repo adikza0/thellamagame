@@ -46,6 +46,7 @@ export class Bat extends Npc {
   }
 
   action(playerPosition = { x: 0, y: 0 }) {
+    if (this.isDestroyed || !this.spriteContainer) return;
     this.move(playerPosition);
     this.syncPosition();
   }
