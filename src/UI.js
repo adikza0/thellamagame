@@ -1,5 +1,6 @@
 import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Text, Assets, Container, Sprite } from "pixi.js";
+import { Slot } from './Slot';
 
 export class UI {
   constructor(player, layer, width, height) {
@@ -31,6 +32,8 @@ export class UI {
   async init() {
     this.hearthTexture = await Assets.load('/src/public/img/hearth.png');
     this.emptyHearthTexture = await Assets.load('/src/public/img/empty_hearth.png');
+    this.slotTexture = await Assets.load('/src/public/img/slot.png');
+    this.bannerTexture = await Assets.load('/src/public/img/banner.png');
   }
 
   calculateWidths() {
@@ -44,12 +47,16 @@ export class UI {
   render() {
     this.renderCoins();
     this.renderHealth();
+    this.renderSlot();
   }
+
   renderHealth() {
     this.healthContainer.removeChildren();
 
     const textAreaHeight = this.height * 0.3;
     const heartsAreaHeight = this.height - textAreaHeight;
+
+    const sectionWidth = this.widths.healthWidth;
 
     // ---------------- TEXT ----------------
     const healthText = new Text({
@@ -61,7 +68,7 @@ export class UI {
     });
 
     healthText.anchor.set(0.5);
-    healthText.x = this.widths.healthWidth / 2;
+    healthText.x = sectionWidth / 2;
     healthText.y = textAreaHeight / 2;
 
     this.healthContainer.addChild(healthText);
@@ -71,10 +78,10 @@ export class UI {
 
     const totalHeartsWidth = this.maxHearth * hearthWidth;
 
-    // center hearts horizontally
-    const startX = (this.widths.healthWidth - totalHeartsWidth) / 2;
+    // center horizontally inside health section
+    const startX = (sectionWidth - totalHeartsWidth) / 2;
 
-    // place hearts inside remaining area
+    // center vertically inside remaining area
     const heartsStartY = textAreaHeight + (heartsAreaHeight - hearthWidth) / 2;
 
     for (let i = 0; i < this.maxHearth; i++) {
@@ -92,6 +99,23 @@ export class UI {
 
       this.healthContainer.addChild(sprite);
     }
+  }
+
+  renderSlot() {
+    if (!this.slotTexture) {
+      console.warn("slotTexture not loaded yet");
+      return;
+    }
+
+    this.slotContainer.removeChildren();
+
+    const slotSprite = new Sprite(this.slotTexture);
+    this.slotContainer.addChild(slotSprite);
+    this.slotContainer.width = this.widths.slotWidth * 0.8;
+    this.slotContainer.x += this.widths.slotWidth * 0.1;
+    this.slotContainer.height = this.height*0.9;
+    this.slotContainer.y = this.height*0.05;
+
   }
 
   renderCoins() {

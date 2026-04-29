@@ -50,7 +50,8 @@ import { Slot } from "./Slot.js";
   await ui.init();
   ui.render();
 
-  const slot = new Slot();
+  const slot = new Slot(uiLayer);
+  await slot.init();
 
   //add NPCs
   const spawner = new Spawner(player, playerLayer);

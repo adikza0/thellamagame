@@ -3,7 +3,7 @@
     "width" : 900,
     "height" : 750,
     "backgroundColor" :  "0x177cba",
-    "UIHeight" : 100,
+    "UIHeight" : 150,
     "UIBackgroundColor": "0x2e13a6"
   },
   "player": {
