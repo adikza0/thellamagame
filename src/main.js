@@ -6,6 +6,7 @@ import gameConfig from './gameConfig.json' assert { type: "json" };
 import { Projectile } from "./Projectile.js";
 import { Spawner } from "./Spawner.js";
 import { UI } from "./UI.js";
+import { Slot } from "./Slot.js";
 
 (async () => {
   const app = new Application();
@@ -49,6 +50,8 @@ import { UI } from "./UI.js";
   await ui.init();
   ui.render();
 
+  const slot = new Slot();
+
   //add NPCs
   const spawner = new Spawner(player, playerLayer);
 
@@ -59,7 +62,7 @@ import { UI } from "./UI.js";
   const projectiles = [];
 
   // Controller
-  const controller = new Controller(document, player, projectiles, projectileLayer);
+  const controller = new Controller(document, player, projectiles, projectileLayer, slot);
   controller.addEventListeners();
 
   // Main game container
@@ -110,3 +113,5 @@ import { UI } from "./UI.js";
   });
 
 })();
+
+// TODO: slots, score management, death and pause

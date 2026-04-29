@@ -35,5 +35,8 @@
     "aimDuration": 100,
     "preparingDuration": 100,
     "firingDuration": 100   
+  },
+  "slot": {
+    "price": 1
   }
 }

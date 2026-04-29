@@ -1,7 +1,7 @@
 import { Projectile } from "./Projectile";
 
 export class Controller {
-  constructor(document, player, projectiles, projectileLayer) {
+  constructor(document, player, projectiles, projectileLayer, slot) {
     this.projectileLayer = projectileLayer;
     this.projectiles = projectiles;
     this.document = document;
@@ -10,10 +10,15 @@ export class Controller {
     this.movementKeys = ["W", "A", "S", "D"];
     this.shootKeys = ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight"];
     this.lastPlayerMovement = "";
+    this.slot = slot;
   }
 
   addEventListeners() {
     this.document.addEventListener('keydown', (event) => {
+      if(event.key === " "){
+        this.slot.spin();
+        return;
+      }
       const key = event.key.toUpperCase();
       if (this.movementKeys.includes(key) && !this.pressedKeys.includes(key)) {
         this.pressedKeys.push(key);
