@@ -14,6 +14,7 @@ export class Player {
     this.velocityY = 0;
     this.health = gameConfig.player.health;
     this.coins = gameConfig.player.startingCoins;
+    this.score = 0;
   }
 
   async init() {

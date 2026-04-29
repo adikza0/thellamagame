@@ -42,10 +42,12 @@ import { UI } from "./UI.js";
   await player.init();
   player.render(gameConfig.game.width / 2, gameConfig.game.height / 2 + gameConfig.game.UIHeight);
   let lastHealth = player.health;
+  let lastCoins = player.coins;
+  let lastScore = player.score;
 
   const ui = new UI(player, uiLayer, gameConfig.game.width, gameConfig.game.UIHeight);
   await ui.init();
-  ui.renderHealth();
+  ui.render();
 
   //add NPCs
   const spawner = new Spawner(player, playerLayer);
@@ -96,6 +98,14 @@ import { UI } from "./UI.js";
     if (player.health !== lastHealth) {
       ui.renderHealth();
       lastHealth = player.health;
+    }
+    if(player.coins !== lastCoins){
+      ui.updateCoins();
+      lastCoins = player.coins;
+    }
+    if(player.score !== lastScore){
+      ui.updateScore();
+      lastScore = player.score;
     }
   });
 
