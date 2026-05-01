@@ -32,7 +32,17 @@ export class UI {
   async init() {
     this.hearthTexture = await Assets.load('/src/public/img/hearth.png');
     this.emptyHearthTexture = await Assets.load('/src/public/img/empty_hearth.png');
-    this.slotTexture = await Assets.load('/src/public/img/slot.png');
+    this.slotTextures = [
+      await Assets.load('src/public/img/slot/slot-1.png'),
+      await Assets.load('src/public/img/slot/slot-2.png'),
+      await Assets.load('src/public/img/slot/slot-3.png'),
+      await Assets.load('src/public/img/slot/slot-4.png'),
+    ];
+
+    this.lastSlotTextures = {
+      up: await Assets.load('src/public/img/slot/slot-5-up.png'),
+      down: await Assets.load('src/public/img/slot/slot-5-down.png'),
+    };
     this.bannerTexture = await Assets.load('/src/public/img/banner.png');
   }
 
@@ -102,20 +112,51 @@ export class UI {
   }
 
   renderSlot() {
-    if (!this.slotTexture) {
-      console.warn("slotTexture not loaded yet");
-      return;
-    }
+    if (!this.slotTextures || !this.lastSlotTextures) return;
 
     this.slotContainer.removeChildren();
+    this.slotSprites = [];
 
-    const slotSprite = new Sprite(this.slotTexture);
-    this.slotContainer.addChild(slotSprite);
-    this.slotContainer.width = this.widths.slotWidth * 0.8;
-    this.slotContainer.x += this.widths.slotWidth * 0.1;
-    this.slotContainer.height = this.height*0.9;
-    this.slotContainer.y = this.height*0.05;
+    const y = this.height * 0.1;
+    const targetHeight = this.height * 0.9;
 
+    let currentX = 0;
+
+    // --- first 4 slots ---
+    for (let i = 0; i < this.slotTextures.length; i++) {
+      const texture = this.slotTextures[i];
+      const sprite = new Sprite(texture);
+
+      // preserve aspect ratio
+      const scale = targetHeight / texture.height;
+      sprite.width = texture.width * scale;
+      sprite.height = targetHeight;
+
+      sprite.x = currentX;
+      sprite.y = y;
+
+      currentX += sprite.width; // ← accumulate real width
+
+      this.slotContainer.addChild(sprite);
+      this.slotSprites.push(sprite);
+    }
+
+    // --- last slot ---
+    const lastTexture = this.lastSlotTextures.up;
+    const lastSprite = new Sprite(lastTexture);
+
+    const scale = targetHeight / lastTexture.height;
+    lastSprite.width = lastTexture.width * scale;
+    lastSprite.height = targetHeight;
+
+    lastSprite.x = currentX;
+    lastSprite.y = y;
+
+    this.slotContainer.addChild(lastSprite);
+    this.lastSlotSprite = lastSprite;
+
+    this.slotContainer.width = this.slotContainer.width * 3;
+    this.slotContainer.x += (this.widths.slotWidth - this.slotContainer.width) / 2;
   }
 
   renderCoins() {
@@ -161,6 +202,12 @@ export class UI {
 
     this.updateCoins();
     this.updateScore();
+  }
+
+  setLastSlotState(state) {
+    if (!this.lastSlotSprite) return;
+
+    this.lastSlotSprite.texture = this.lastSlotTextures[state];
   }
 
   updateCoins() {

@@ -49,6 +49,7 @@ import { Slot } from "./Slot.js";
   const ui = new UI(player, uiLayer, gameConfig.game.width, gameConfig.game.UIHeight);
   await ui.init();
   ui.render();
+  //ui.setLastSlotState('down')
 
   const slot = new Slot(uiLayer);
   await slot.init();
