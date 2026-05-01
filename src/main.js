@@ -51,7 +51,7 @@ import { Slot } from "./Slot.js";
   ui.render();
   //ui.setLastSlotState('down')
 
-  const slot = new Slot(uiLayer);
+  const slot = new Slot(uiLayer, ui);
   await slot.init();
 
   //add NPCs
@@ -82,7 +82,7 @@ import { Slot } from "./Slot.js";
   app.ticker.add((ticker) => {
 
     const delta = ticker.deltaMS;
-
+    slot.update();
     // Spawner (NPC + pickups + spawn logic)
     spawner.update(delta, player);
 

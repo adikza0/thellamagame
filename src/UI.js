@@ -217,4 +217,7 @@ export class UI {
   updateScore() {
     this.scoreValueText.text = this.player.score;
   }
+  returnReelWidths(){
+    return this.slotSprites[1].width;
+  }
 }

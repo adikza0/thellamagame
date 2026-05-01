@@ -37,6 +37,7 @@
     "firingDuration": 100   
   },
   "slot": {
-    "price": 1
+    "price": 1,
+    "slotSpeed": 1
   }
 }
