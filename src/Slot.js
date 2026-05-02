@@ -97,9 +97,15 @@ export class Slot {
     symbolSprite.y += gameConfig.slot.slotSpeed;
   }
 
-  destroySymbol(symbolSprite) {
-
+  destroyOldSymbols(){
+    for (let sprite of this.oldSymbols) {
+      this.ui.slotContainer.removeChild(sprite);
+      sprite.destroy();
+    }
+    this.oldSymbols = [];
   }
+
+  
 
   update() {
     const speed = gameConfig.slot.slotSpeed;
@@ -123,6 +129,7 @@ export class Slot {
     const allStopped = this.newSymbols.every(s => s.targetY === undefined);
 
     if (allStopped && this.newSymbols.length > 0) {
+      this.destroyOldSymbols();
       this.oldSymbols = this.newSymbols;
       this.newSymbols = [];
       this.isRunning = false;
