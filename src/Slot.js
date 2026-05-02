@@ -16,9 +16,12 @@ export class Slot {
     this.goldTexture = await Assets.load('/src/public/img/gold.png');
     this.newSymbols = [];
     this.spawnInitialSymbols();
+    this.isRunning = false;
   }
 
   async spin() {
+    if (this.isRunning) return;
+    this.isRunning = true;
     // staré symboly → dolů
     for (let sprite of this.oldSymbols) {
       sprite.targetY = this.ui.slotSprites[1].height * 0.7;
@@ -89,13 +92,7 @@ export class Slot {
     }
     return symbolSprite;
   }
-  moveToCenter(symbolSprite) {
-    symbolSprite.y += gameConfig.slot.slotSpeed;
-  }
-
-  moveToBottom(symbolSprite) {
-    symbolSprite.y += gameConfig.slot.slotSpeed;
-  }
+  
 
   destroyOldSymbols(){
     for (let sprite of this.oldSymbols) {
